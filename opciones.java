@@ -107,23 +107,31 @@ public class opciones {
 
 	//Define el archivo de texto que sera de lectura
     public boolean setArchivoEntrada() {
-    	String sPath = JOptionPane.showInputDialog("Ingrese direccion de archivo de entrada: ");
-    	if(sPath != null && sPath.length()>0) {
-    		// Crea un objeto File que representa el archivo en la dirección especificada
-    		archivoEntrada = new File(sPath);
-
-    		// Crea el archivo si no existe
-    		if (archivoEntrada.exists()) {
-    		    JOptionPane.showMessageDialog(null, "Archivo encontrado y definido");
-    		    return true;
+    	try {
+    		String sPath = JOptionPane.showInputDialog("Ingrese direccion de archivo de entrada: ");
+    		
+    		if(sPath != null && sPath.length()>0) {
+    			// Crea un objeto File que representa el archivo en la dirección especificada
+        		archivoEntrada = new File(sPath + ".txt");
+        		
+                // Crea el archivo si no existe
+                if (!archivoEntrada.exists()) {
+                	archivoEntrada.createNewFile();
+                    JOptionPane.showMessageDialog(null, "Archivo creado exitosamente");
+                }else {
+                	
+                	JOptionPane.showMessageDialog(null, "Archivo definido");
+                }
+                return true;
     		}else {
-    			JOptionPane.showMessageDialog(null, "El archivo especificado no existe");
-    			archivoEntrada = null;
+    			JOptionPane.showMessageDialog(null, "La direccion no es valida");
     		}
-    	}else {
-    		JOptionPane.showMessageDialog(null, "La direccion no es valida");
-    	}
-    	return false;
+            return false;
+        } catch (IOException e) {
+            // Manejo de excepciones en caso de error de escritura
+            e.printStackTrace();
+            return false;
+        }	
     }
     
     //Define el archivo de texto que sera de escritura para los resultados obtenidos
@@ -133,7 +141,7 @@ public class opciones {
     		
     		if(sPath != null && sPath.length()>0) {
     			// Crea un objeto File que representa el archivo en la dirección especificada
-        		archivoSalida = new File(sPath);
+        		archivoSalida = new File(sPath + ".txt");
         		
                 // Crea el archivo si no existe
                 if (!archivoSalida.exists()) {
