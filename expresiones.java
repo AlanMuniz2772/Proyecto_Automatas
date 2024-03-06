@@ -2,6 +2,22 @@ import java.util.regex.Pattern;
 
 public class expresiones {
 
+    //Busca cual expresion regular es la coincidencia pra la cadena dada
+    public String getResult(String sCadena) {
+    	String sResultado = "'"+sCadena +"'";
+    	if(lenguaje1(sCadena)) {
+    		 sResultado= sResultado+ " es una cadena válida en la expresion regular [a-zA-Z]+[0-9]*_@[a-z]?";
+    	}else if(lenguaje2(sCadena)) {
+    		 sResultado = sResultado + " es una cadena válida en la expresion regular @[a-z]+[0,2,4,6,8]*[b]?";
+    	}else if(lenguaje3(sCadena)) {
+    		sResultado = sResultado + " es una cadena válida en la expresión regular [a-z]+[A-Z]*[0-9]?";
+    	}
+    	else {
+    		sResultado = sResultado + " no pertenece a ningun lenguaje"; 
+    	}
+    	return sResultado;
+    }
+
     //Verifica que la cadena dada pertenece a la primer expresion regular
     public static boolean lenguaje1(String sCadena) {
     	// Patrón 1: Una o más letras seguidas de cero o más números y un guion bajo y un @.
