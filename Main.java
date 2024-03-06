@@ -1,9 +1,6 @@
-import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 public class Main {
-
-    public static ArrayList<String> listaDeResultados = new ArrayList<>();
 
     public static opciones archivo = new opciones();
     public static expresiones lenguajes = new expresiones();
@@ -15,8 +12,7 @@ public class Main {
                 "\n2. Leer archivo de entrada" + // lee el archivo de entrada con las cadenas a procesar
                 "\n3. Mostrar resultados en memoria" +
                 "\n4. Limpiar resultados en memoria" +
-                "\n5. Guardar resultados en archivo de salida" + // Unica manera de guardar resultados en archivo de
-                                                                 // texto
+                "\n5. Guardar resultados en archivo de salida" + // Unica manera de guardar resultados en archivo de salida
                 "\n6. Definir direccion de archivo entrada" +
                 "\n7. Definir direccion de archivo salida";
 
@@ -39,10 +35,7 @@ public class Main {
 
             switch (opcion) {
                 case '1':
-                    String sCadena = JOptionPane.showInputDialog("Ingrese cadena: ");
-                    String sResult = lenguajes.getResult(sCadena);
-                    listaDeResultados.add(sResult);
-                    JOptionPane.showMessageDialog(null, sResult);
+                    archivo.ingresoUnico();
                     break;
 
                 case '2':
@@ -54,8 +47,7 @@ public class Main {
                     break;
 
                 case '4':
-                    listaDeResultados.clear();
-                    JOptionPane.showMessageDialog(null, "Lista de resultados limpiada");
+                    archivo.limpiarResultados();
                     break;
 
                 case '5':
@@ -71,7 +63,7 @@ public class Main {
                     break;
                     
                 default:
-                    JOptionPane.showMessageDialog(null, "Vuelve a intentar");
+                    JOptionPane.showMessageDialog(null, "Opcion no valida");
                     break;
             }
         } while (input != null);

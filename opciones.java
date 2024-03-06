@@ -162,4 +162,16 @@ public class opciones {
             return false;
         }	
     }
+
+	public void ingresoUnico () {
+		String sCadena = JOptionPane.showInputDialog("Ingrese cadena: ");
+		String sResult = lenguajes.getResult(sCadena);
+		listaDeResultados.add(sResult);
+		JOptionPane.showMessageDialog(null, sResult);
+	}
+
+	public void limpiarResultados() {
+		listaDeResultados.clear();
+		JOptionPane.showMessageDialog(null, "Lista de resultados limpiada");
+	}
 }
