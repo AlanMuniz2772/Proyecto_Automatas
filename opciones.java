@@ -4,16 +4,37 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
 public class opciones {
-    public static void leerArchivo() {
+
+	//Esta clase maneja las opciones de los archivos
+
+	private static File archivoEntrada;
+	private static File archivoSalida;
+	public static ArrayList<String> listaDeResultados = new ArrayList<>();
+	public static expresiones lenguajes = new expresiones();
+
+	public void mostrarResultados() {
+    	if (listaDeResultados.size() > 0) {
+    		String sResultados = "";
+        	for(String result: listaDeResultados) {
+        		sResultados = sResultados + "\n"+ result;
+        	}
+        	JOptionPane.showMessageDialog(null, "Resultados: " +sResultados);
+    	}else {
+    		JOptionPane.showMessageDialog(null, "Lista de resultados vacia");
+    	}
+    }
+
+    public void leerArchivo() {
     	
     	boolean bExists = false;
     	
         try {
-    		if (archivoEntrada== null) {
+    		if (archivoEntrada == null) {
     			
 	    		 bExists = setArchivoEntrada();
 			}else {
@@ -30,7 +51,7 @@ public class opciones {
 	            while ((linea = lector.readLine()) != null) {
 	            	
 	            	if (linea.length() > 0) {
-	            		listaDeResultados.add(getResult(linea));
+	            		listaDeResultados.add(lenguajes.getResult(linea));
 	            	}
 	            }
 	            lector.close();
@@ -44,7 +65,7 @@ public class opciones {
         }
     }
 
-    public static void escribirEnArchivo() {
+    public void escribirEnArchivo() {
     	boolean bExists = false;
     	try {
     		if(listaDeResultados.size() > 0) {
@@ -84,6 +105,53 @@ public class opciones {
 		}
     }
 
-    
+	//Define el archivo de texto que sera de lectura
+    public boolean setArchivoEntrada() {
+    	String sPath = JOptionPane.showInputDialog("Ingrese direccion de archivo de entrada: ");
+    	if(sPath != null && sPath.length()>0) {
+    		// Crea un objeto File que representa el archivo en la dirección especificada
+    		archivoEntrada = new File(sPath);
 
+    		// Crea el archivo si no existe
+    		if (archivoEntrada.exists()) {
+    		    JOptionPane.showMessageDialog(null, "Archivo encontrado y definido");
+    		    return true;
+    		}else {
+    			JOptionPane.showMessageDialog(null, "El archivo especificado no existe");
+    			archivoEntrada = null;
+    		}
+    	}else {
+    		JOptionPane.showMessageDialog(null, "La direccion no es valida");
+    	}
+    	return false;
+    }
+    
+    //Define el archivo de texto que sera de escritura para los resultados obtenidos
+    public boolean setArchivoSalida() {
+    	try {
+    		String sPath = JOptionPane.showInputDialog("Ingrese direccion de archivo de salida(o cree uno): ");
+    		
+    		if(sPath != null && sPath.length()>0) {
+    			// Crea un objeto File que representa el archivo en la dirección especificada
+        		archivoSalida = new File(sPath);
+        		
+                // Crea el archivo si no existe
+                if (!archivoSalida.exists()) {
+                	archivoSalida.createNewFile();
+                    JOptionPane.showMessageDialog(null, "Archivo creado exitosamente");
+                }else {
+                	
+                	JOptionPane.showMessageDialog(null, "Archivo definido");
+                }
+                return true;
+    		}else {
+    			JOptionPane.showMessageDialog(null, "La direccion no es valida");
+    		}
+            return false;
+        } catch (IOException e) {
+            // Manejo de excepciones en caso de error de escritura
+            e.printStackTrace();
+            return false;
+        }	
+    }
 }
