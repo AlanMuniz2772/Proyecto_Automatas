@@ -69,7 +69,7 @@ public class Main {
                 case '7':
                     archivo.setArchivoSalida();
                     break;
-                    
+
                 default:
                     JOptionPane.showMessageDialog(null, "Vuelve a intentar");
                     break;
