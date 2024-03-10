@@ -28,7 +28,27 @@ public class expresiones {
 
         StringBuilder operadores = new StringBuilder("Operadores aritméticos encontrados: ");
         while (matcher.find()) {
-            operadores.append(matcher.group()).append(" ");
+            String operador = matcher.group();
+            switch (operador) {
+                case "+":
+                    operadores.append("Suma ");
+                    break;
+                case "-":
+                    operadores.append("Resta ");
+                    break;
+                case "*":
+                    operadores.append("Multiplicación ");
+                    break;
+                case "/":
+                    operadores.append("División ");
+                    break;
+                case "%":
+                    operadores.append("Módulo ");
+                    break;
+                default:
+                    operadores.append("Operador desconocido ");
+            }
+            operadores.append("(").append(operador).append(") ");
         }
         return operadores.toString();
     }
