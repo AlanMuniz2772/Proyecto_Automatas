@@ -62,7 +62,24 @@ public class expresiones {
 
         StringBuilder operadores = new StringBuilder("Operadores lógicos encontrados: ");
         while (matcher.find()) {
-            operadores.append(matcher.group()).append(" ");
+            String operador = matcher.group();
+            switch (operador) {
+                case "&&":
+                    operadores.append("AND ");
+                    break;
+                case "||":
+                    operadores.append("OR ");
+                    break;
+                case "!":
+                    operadores.append("NOT ");
+                    break;
+                case "==":
+                    operadores.append("Igual ");
+                    break;
+                default:
+                    operadores.append("Operador lógico desconocido ");
+            }
+            operadores.append("(").append(operador).append(") ");
         }
         return operadores.toString();
     }
