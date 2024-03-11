@@ -53,7 +53,7 @@ public class expresiones {
 
     public static String logico(String sCadena) {
         // Operadores lógicos
-        String logico = "[\\&\\|\\!\\=]"; // Expresión regular para identificar operadores lógicos
+        String logico = "&&|\\|\\||!"; // Expresión regular para identificar operadores lógicos
 
         Pattern pattern = Pattern.compile(logico);
         Matcher matcher = pattern.matcher(sCadena);
@@ -79,7 +79,7 @@ public class expresiones {
 
     public static String comparativo(String sCadena) {
         // Operadores comparativos
-        String comparativo = "[\\<\\>\\=]"; // Expresión regular para identificar operadores de comparación
+        String comparativo = "[<>]=?"; // Expresión regular para identificar operadores de comparación
 
         Pattern pattern = Pattern.compile(comparativo);
         Matcher matcher = pattern.matcher(sCadena);
