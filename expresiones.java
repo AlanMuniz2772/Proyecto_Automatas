@@ -53,7 +53,7 @@ public class expresiones {
 
     public static String logico(String sCadena) {
         // Operadores lógicos
-        String logico = "&&|\\|\\||!"; // Expresión regular para identificar operadores lógicos
+        String logico = "AND|OR|NOT"; // Expresión regular para identificar operadores lógicos
 
         Pattern pattern = Pattern.compile(logico);
         Matcher matcher = pattern.matcher(sCadena);
@@ -62,13 +62,13 @@ public class expresiones {
         while (matcher.find()) {
             String operador = matcher.group();
             switch (operador) {
-                case "&&":
+                case "AND":
                     operadores.append("AND ");
                     break;
-                case "||":
+                case "OR":
                     operadores.append("OR ");
                     break;
-                case "!":
+                case "NOT":
                     operadores.append("NOT ");
                     break;
             }
