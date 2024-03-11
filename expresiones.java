@@ -5,7 +5,7 @@ public class expresiones {
 
     // Busca cual expresion regular es la coincidencia pra la cadena dada
     public String getResult(String sCadena) {
-        String sResultado = "'" + sCadena + "' ";
+        String sResultado = "";
 
         String operadoresAritmeticos = aritmetico(sCadena);
         sResultado = sResultado + operadoresAritmeticos;
@@ -26,7 +26,7 @@ public class expresiones {
         Pattern pattern = Pattern.compile(aritmetico);
         Matcher matcher = pattern.matcher(sCadena);
 
-        StringBuilder operadores = new StringBuilder("Operadores aritméticos encontrados: ");
+        StringBuilder operadores = new StringBuilder("\nOperadores aritméticos encontrados: ");
         while (matcher.find()) {
             String operador = matcher.group();
             switch (operador) {
@@ -58,7 +58,7 @@ public class expresiones {
         Pattern pattern = Pattern.compile(logico);
         Matcher matcher = pattern.matcher(sCadena);
 
-        StringBuilder operadores = new StringBuilder("Operadores lógicos encontrados: ");
+        StringBuilder operadores = new StringBuilder("\nOperadores lógicos encontrados: ");
         while (matcher.find()) {
             String operador = matcher.group();
             switch (operador) {
@@ -84,7 +84,7 @@ public class expresiones {
         Pattern pattern = Pattern.compile(comparativo);
         Matcher matcher = pattern.matcher(sCadena);
 
-        StringBuilder operadores = new StringBuilder("Operadores comparativos encontrados: ");
+        StringBuilder operadores = new StringBuilder("\nOperadores comparativos encontrados: ");
         while (matcher.find()) {
             String operador = matcher.group();
             switch (operador) {
