@@ -18,7 +18,8 @@ public class Main {
                     "\n5. Guardar resultados en archivo de salida" + // Unica manera de guardar resultados en archivo de
                                                                      // texto
                     "\n6. Definir direccion de archivo entrada" +
-                    "\n7. Definir direccion de archivo salida";
+                    "\n7. Definir direccion de archivo salida" +
+                    "\n8. Salir del programa";
 
             char opcion;
 
@@ -68,6 +69,11 @@ public class Main {
 
                     case '7':
                         archivo.setArchivoSalida();
+                        break;
+
+                    case '8':
+                        JOptionPane.showMessageDialog(null, "Saliendo del programa...");
+                        System.exit(0);
                         break;
 
                     default:
