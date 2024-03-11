@@ -21,7 +21,7 @@ public class expresiones {
 
     public static String aritmetico(String sCadena) {
         // Operadores aritméticos
-        String aritmetico = "[\\+\\-\\*\\/\\%]"; // Expresión regular para identificar operadores aritméticos
+        String aritmetico = "\\*\\*|//|[+\\-%\\*\\/]"; // Expresión regular para identificar operadores aritméticos
 
         Pattern pattern = Pattern.compile(aritmetico);
         Matcher matcher = pattern.matcher(sCadena);
@@ -44,6 +44,12 @@ public class expresiones {
                     break;
                 case "%":
                     operadores.append("Módulo ");
+                    break;
+                case "**":
+                    operadores.append("Exponente ");
+                    break;
+                case "//":
+                    operadores.append("Cociente ");
                     break;
             }
             operadores.append("(").append(operador).append(") ");
@@ -79,7 +85,7 @@ public class expresiones {
 
     public static String comparativo(String sCadena) {
         // Operadores comparativos
-        String comparativo = "[<>]=?"; // Expresión regular para identificar operadores de comparación
+        String comparativo = "[<>!]=?"; // Expresión regular para identificar operadores de comparación
 
         Pattern pattern = Pattern.compile(comparativo);
         Matcher matcher = pattern.matcher(sCadena);
@@ -102,6 +108,9 @@ public class expresiones {
                     break;
                 case "<=":
                     operadores.append("Menor o igual que ");
+                    break;
+                case "!=":
+                    operadores.append("Diferente ");
                     break;
             }
             operadores.append("(").append(operador).append(") ");
