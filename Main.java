@@ -3,7 +3,7 @@ import javax.swing.JOptionPane;
 public class Main {
 
     public static opciones archivo = new opciones();
-    public static expresiones lenguajes = new expresiones();
+    
 
     // Menu
     public static void main(String[] args) {
@@ -43,7 +43,7 @@ public class Main {
                     break;
 
                 case '3':
-                    archivo.mostrarResultados();
+                    archivo.mostrarResultados(opciones.listaDeResultados);
                     break;
 
                 case '4':
@@ -70,3 +70,4 @@ public class Main {
     }
 
 }
+
