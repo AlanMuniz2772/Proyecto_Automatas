@@ -113,4 +113,28 @@ public class expresiones {
     public static boolean esLetra(char caracter) {
         return (caracter >= 'a' && caracter <= 'z') || (caracter >= 'A' && caracter <= 'Z');
     }
-}
+
+    // public String getResult(String sCadena) {
+    //     String sResultado = "";
+
+    // boolean numeros = analizarNumeros(sCadena);
+    //     sResultado = sResultado + numeros;
+
+    //     return sResultado;
+    // }
+
+    public static boolean analizarNumeros(String sCadena) {
+        // Expresión regular para identificar números del 0 al 9
+        String regexNumeros = "[0-9]";
+
+        if(Pattern.matches(regexNumeros, sCadena)){
+            return true;
+        }
+        return false;
+    }
+
+        
+    
+    
+    }
+
