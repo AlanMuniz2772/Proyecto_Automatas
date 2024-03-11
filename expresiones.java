@@ -45,8 +45,6 @@ public class expresiones {
                 case "%":
                     operadores.append("Módulo ");
                     break;
-                default:
-                    operadores.append("Operador desconocido ");
             }
             operadores.append("(").append(operador).append(") ");
         }
@@ -73,11 +71,6 @@ public class expresiones {
                 case "!":
                     operadores.append("NOT ");
                     break;
-                case "==":
-                    operadores.append("Igual ");
-                    break;
-                default:
-                    operadores.append("Operador lógico desconocido ");
             }
             operadores.append("(").append(operador).append(") ");
         }
@@ -93,7 +86,25 @@ public class expresiones {
 
         StringBuilder operadores = new StringBuilder("Operadores comparativos encontrados: ");
         while (matcher.find()) {
-            operadores.append(matcher.group()).append(" ");
+            String operador = matcher.group();
+            switch (operador) {
+                case ">":
+                    operadores.append("Mayor que ");
+                    break;
+                case "<":
+                    operadores.append("Menor que ");
+                    break;
+                case "==":
+                    operadores.append("Igual ");
+                    break;
+                case ">=":
+                    operadores.append("Mayor o igual que ");
+                    break;
+                case "<=":
+                    operadores.append("Menor o igual que ");
+                    break;
+            }
+            operadores.append("(").append(operador).append(") ");
         }
         return operadores.toString();
     }
