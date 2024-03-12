@@ -1,12 +1,9 @@
-import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 public class Main {
 
-    public static ArrayList<String> listaDeResultados = new ArrayList<>();
-
     public static opciones archivo = new opciones();
-    public static expresiones lenguajes = new expresiones();
+    
 
     // Menu
     public static void main(String[] args) {
@@ -26,7 +23,6 @@ public class Main {
             // Almacena los resultados obtenidos de las cadenas procesadas
 
             String input;
-
             do {
                 input = JOptionPane.showInputDialog(null, menu);
 
@@ -45,11 +41,9 @@ public class Main {
                         listaDeResultados.add(sResult);
                         JOptionPane.showMessageDialog(null, sResult);
                         break;
-
                     case '2':
                         archivo.leerArchivo();
                         break;
-
                     case '3':
                         archivo.mostrarResultados();
                         break;
