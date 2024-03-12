@@ -123,18 +123,18 @@ public class expresiones {
     //     return sResultado;
     // }
 
-    public static boolean analizarNumeros(String sCadena) {
+    public static String analizarNumeros(String sCadena) {
         // Expresión regular para identificar números del 0 al 9
-        String regexNumeros = "[0-9]";
+        String regexNumeros = "[-?\\d+(\\.\\d+)?[dlf]";
 
         if(Pattern.matches(regexNumeros, sCadena)){
-            return true;
+            return "\nLa cadena es un numero en lenguaje C";
         }
-        return false;
+        return "\nLa cadena no es un numero en lenguaje C";;
     }
 
         
     
     
-    }
+}
 
