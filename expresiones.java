@@ -129,7 +129,7 @@ public class expresiones {
     public static String isIdentificadorJava(String sCadena) {
             // Patrón: Una letra o un guion bajo seguido de cero o más letras, números o
             // guiones bajos
-            String patronIdentificador = "[a-zA-Z_][a-zA-Z0-9_]*";
+            String patronIdentificador = "\\$*_*[a-zA-Z]+[a-zA-Z0-9_$]*";
 
             if (Pattern.matches(patronIdentificador, sCadena)) {
                 return "\nLa cadena es un identificador";
