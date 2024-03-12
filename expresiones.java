@@ -1,117 +1,151 @@
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class expresiones {
 
-    //Verifica que la cadena dada pertenece a la primer expresion regular
-    public static boolean lenguaje1(String sCadena) {
-    	// Patrón 1: Una o más letras seguidas de cero o más números y un guion bajo y un @.
-        String patron1 = "[a-zA-Z]+[0-9]*_@[a-z]?";
-        
-        if (Pattern.matches(patron1, sCadena)) {
-        	return true;
-        }
-        
-        return false;
+    // Busca cual expresion regular es la coincidencia pra la cadena dada
+    public String getResult(String sCadena) {
+        String sResultado = "\n" + sCadena;
+
+        String operadoresAritmeticos = aritmetico(sCadena);
+        sResultado = sResultado + operadoresAritmeticos;
+
+        String operadoresLogicos = logico(sCadena);
+        sResultado = sResultado + operadoresLogicos;
+
+        String operadoresComparativos = comparativo(sCadena);
+        sResultado = sResultado + operadoresComparativos;
+
+        String identificadorJava = isIdentificadorJava(sCadena);
+        sResultado = sResultado + identificadorJava;
+
+        String identificadorNumeros = analizarNumeros(sCadena);
+        sResultado = sResultado + identificadorNumeros;
+
+        return sResultado;
     }
 
-    //Verifica que la cadena dada pertenece a la segunda expresion regular
-    public static boolean lenguaje2(String palabra2) {
-        boolean primerCaracterValido = false;
-        boolean letrasValidas = false;
-        boolean numerosValidos = true; // Inicialmente suponemos que no hay números o todos son pares
-        boolean letraDespuesDeNumeroPar = false; // Flag para detectar letra después de un número par
-        boolean caracterFinal = false;
-        boolean comparacion = false;
-        char ultimoCaracter = palabra2.charAt(palabra2.length() - 1);
-        char penultimoCaracter = palabra2.charAt(palabra2.length() - 2);
-        
-       
+    public static String aritmetico(String sCadena) {
+        // Operadores aritméticos
+        String aritmetico = "\\*\\*|//|[+\\-%\\*\\/]"; // Expresión regular para identificar operadores aritméticos
 
-        if (ultimoCaracter == 'b'
-                && (Character.isDigit(penultimoCaracter) && Character.getNumericValue(penultimoCaracter) % 2 == 0)) {
-            caracterFinal = true;
-        }
+        Pattern pattern = Pattern.compile(aritmetico);
+        Matcher matcher = pattern.matcher(sCadena);
 
-        for (char caracter : palabra2.toCharArray()) {
-            if (!primerCaracterValido) {
-                if (caracter == '@') {
-                    primerCaracterValido = true;
-                }
-            } else {
-                if (esLetra(caracter)) {
-                    if (Character.isLowerCase(caracter)) {
-                        letrasValidas = true;
-                        // Si encontramos una letra después de un número par, la cadena no es válida
-                        if (letraDespuesDeNumeroPar && !caracterFinal) {
-                            comparacion = true;
-                        }
-                    }
-                } else if (Character.isDigit(caracter)) {
-                    int numero = Character.getNumericValue(caracter);
-                    if (numero % 2 != 0) {
-                        // Si encontramos un número impar, la cadena no es válida
-                        numerosValidos = false;
-                        break;
-                    } else {
-                        // Si encontramos un número par, marcamos la bandera
-                        letraDespuesDeNumeroPar = true;
-                    }
-                }
-            }
-        }
-
-        if (primerCaracterValido && letrasValidas && numerosValidos && !comparacion) {
-        	return true;
-        } 
-        
-        return false;
-        
-    }
-
-  //Verifica que la cadena dada pertenece a la tercera expresion regular
-    public static boolean lenguaje3(String palabra2) {
-        boolean letrasValidas = false;
-        boolean numerosValidos = true;
-        boolean primerCaracterValido = true;
-        char ultimoCaracter = palabra2.charAt(palabra2.length() - 1);
-        //char penultimoCaracter = palabra2.charAt(palabra2.length() - 2);
-
-        for (char caracter : palabra2.toCharArray()) {
-        	    if (!primerCaracterValido) {
-        	        if (Character.isLowerCase(caracter)) {
-        	            primerCaracterValido = false;
-        	        }
-        	    }else if (esLetra(caracter)) {
-        	    	if (Character.isLowerCase(caracter) && !Character.isDigit(ultimoCaracter)) {
-                    letrasValidas = true;// Si la letra es minuscula y no hay un número al final, es válido
-                    //continue;
-                } else if (Character.isLowerCase(caracter) && Character.isDigit(ultimoCaracter)) {
-                    letrasValidas = true;// Si la letra es minúscula y hay numero al final es valido
-                    //continue;
+        StringBuilder operadores = new StringBuilder("\nOperadores aritmeticos encontrados: ");
+        while (matcher.find()) {
+            String operador = matcher.group();
+            switch (operador) {
+                case "+":
+                    operadores.append("Suma ");
                     break;
-//                } else if (Character.isUpperCase(caracter)) {
-//                    letrasValidas = false;// Si la letra es mayúscula, es opcional
-//                    //continue;
-                   } else {
-                    // En caso contrario, no es válido
-                    letrasValidas = false;
+                case "-":
+                    operadores.append("Resta ");
                     break;
-                }
-            } else if (!Character.isDigit(caracter)) {
-                // Si no es una letra ni un dígito, no es válido
-                numerosValidos = false;
-                break;
+                case "*":
+                    operadores.append("Multiplicacion ");
+                    break;
+                case "/":
+                    operadores.append("Division ");
+                    break;
+                case "%":
+                    operadores.append("Modulo ");
+                    break;
+                case "**":
+                    operadores.append("Exponente ");
+                    break;
+                case "//":
+                    operadores.append("Cociente ");
+                    break;
             }
+            operadores.append("(").append(operador).append(") ");
         }
-
-        if (primerCaracterValido && letrasValidas && numerosValidos) {
-            return true;
-        } 
-        return false;
+        return operadores.toString();
     }
-    
-    public static boolean esLetra(char caracter) {
-        return (caracter >= 'a' && caracter <= 'z') || (caracter >= 'A' && caracter <= 'Z');
+
+    public static String logico(String sCadena) {
+        // Operadores lógicos
+        String logico = "AND|OR|NOT"; // Expresión regular para identificar operadores lógicos
+
+        Pattern pattern = Pattern.compile(logico);
+        Matcher matcher = pattern.matcher(sCadena);
+
+        StringBuilder operadores = new StringBuilder("\nOperadores logicos encontrados: ");
+        while (matcher.find()) {
+            String operador = matcher.group();
+            switch (operador) {
+                case "AND":
+                    operadores.append("AND ");
+                    break;
+                case "OR":
+                    operadores.append("OR ");
+                    break;
+                case "NOT":
+                    operadores.append("NOT ");
+                    break;
+            }
+            operadores.append("(").append(operador).append(") ");
+        }
+        return operadores.toString();
+    }
+
+    public static String comparativo(String sCadena) {
+        // Operadores comparativos
+        String comparativo = "[<>!]=?"; // Expresión regular para identificar operadores de comparación
+
+        Pattern pattern = Pattern.compile(comparativo);
+        Matcher matcher = pattern.matcher(sCadena);
+
+        StringBuilder operadores = new StringBuilder("\nOperadores comparativos encontrados: ");
+        while (matcher.find()) {
+            String operador = matcher.group();
+            switch (operador) {
+                case ">":
+                    operadores.append("Mayor que ");
+                    break;
+                case "<":
+                    operadores.append("Menor que ");
+                    break;
+                case "==":
+                    operadores.append("Igual ");
+                    break;
+                case ">=":
+                    operadores.append("Mayor o igual que ");
+                    break;
+                case "<=":
+                    operadores.append("Menor o igual que ");
+                    break;
+                case "!=":
+                    operadores.append("Diferente ");
+                    break;
+            }
+            operadores.append("(").append(operador).append(") ");
+        }
+        return operadores.toString();
+    }
+
+    // Verifica que la cadena dada pertenece a la expresion regular de
+    // identificadores en Java
+    public static String isIdentificadorJava(String sCadena) {
+            // Patrón: Una letra o un guion bajo seguido de cero o más letras, números o
+            // guiones bajos
+            String patronIdentificador = "\\$*_*[a-zA-Z]+[a-zA-Z0-9_$]*";
+
+            if (Pattern.matches(patronIdentificador, sCadena)) {
+                return "\nLa cadena es un identificador";
+            }
+
+            return "\nLa cadena NO es un identificador";
+    }
+
+    public static String analizarNumeros(String sCadena) {
+        // Expresión regular para identificar números del 0 al 9
+        String regexNumeros = "-?\\d+(\\.\\d+)?[dlf]";
+
+        if(Pattern.matches(regexNumeros, sCadena)){
+            return "\nLa cadena es un numero en lenguaje C";
+        }
+        return "\nLa cadena NO es un numero en lenguaje C";
     }
 
     // public String getResult(String sCadena) {
