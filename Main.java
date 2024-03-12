@@ -16,31 +16,31 @@ public class Main {
                 "\n6. Definir direccion de archivo entrada" +
                 "\n7. Definir direccion de archivo salida";
 
-        char opcion;
+            char opcion;
 
-        // Almacena los resultados obtenidos de las cadenas procesadas
+            // Almacena los resultados obtenidos de las cadenas procesadas
 
-        String input;
+            String input;
 
-        do {
-            input = JOptionPane.showInputDialog(null, menu);
+            do {
+                input = JOptionPane.showInputDialog(null, menu);
 
-            // Si el usuario hace clic en "Cancelar" o cierra la ventana, salimos del
-            // programa
-            if (input == null) {
-                System.exit(0);
-            }
+                // Si el usuario hace clic en "Cancelar" o cierra la ventana, salimos del
+                // programa
+                if (input == null) {
+                    System.exit(0);
+                }
 
-            opcion = input.charAt(0);
+                opcion = input.charAt(0);
 
             switch (opcion) {
                 case '1':
                     archivo.ingresoUnico();
                     break;
 
-                case '2':
-                    archivo.leerArchivo();
-                    break;
+                    case '2':
+                        archivo.leerArchivo();
+                        break;
 
                 case '3':
                     archivo.mostrarResultados(opciones.listaDeResultados);
@@ -50,13 +50,13 @@ public class Main {
                     archivo.limpiarResultados();
                     break;
 
-                case '5':
-                    archivo.escribirEnArchivo();
-                    break;
+                    case '5':
+                        archivo.escribirEnArchivo();
+                        break;
 
-                case '6':
-                    archivo.setArchivoEntrada();
-                    break;
+                    case '6':
+                        archivo.setArchivoEntrada();
+                        break;
 
                 case '7':
                     archivo.setArchivoSalida();
@@ -68,6 +68,5 @@ public class Main {
             }
         } while (input != null);
     }
-
 }
 

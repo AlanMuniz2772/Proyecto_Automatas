@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 public class opciones {
 
 	// Esta clase maneja las opciones de los archivos
+	// Esta clase maneja las opciones de los archivos
 
 	private static File archivoEntrada;
 	private static File archivoSalida;
@@ -104,7 +105,6 @@ public class opciones {
 		}
 	}
 
-  	
 	//Define el archivo de texto que sera de lectura
     public boolean setArchivoEntrada() {
     	try {
