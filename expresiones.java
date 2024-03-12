@@ -1,57 +1,29 @@
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.JOptionPane;
 
 public class expresiones {
 
     // Busca cual expresion regular es la coincidencia pra la cadena dada
     public String getResult(String sCadena) {
-        try {
-            String sResultado = "'"+sCadena +"'";
-            if(isIdentificadorJava(sCadena)) {
-                sResultado= sResultado+ " - Identificador";
-            }
-            else {
-                sResultado = sResultado + " - No coincidencias"; 
-            }
-            return sResultado;
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error en la función getResult: " + e.getMessage());
-            return null;
-        }
-    	
+        String sResultado = "\n" + sCadena;
+
+        String operadoresAritmeticos = aritmetico(sCadena);
+        sResultado = sResultado + operadoresAritmeticos;
+
+        String operadoresLogicos = logico(sCadena);
+        sResultado = sResultado + operadoresLogicos;
+
+        String operadoresComparativos = comparativo(sCadena);
+        sResultado = sResultado + operadoresComparativos;
+
+        String identificadorJava = isIdentificadorJava(sCadena);
+        sResultado = sResultado + identificadorJava;
+
+        String identificadorNumeros = analizarNumeros(sCadena);
+        sResultado = sResultado + identificadorNumeros;
+
+        return sResultado;
     }
-
-
-    // Verifica que la cadena dada pertenece a la expresion regular de identificadores en Java
-    public static boolean isIdentificadorJava(String sCadena) {
-        try {
-            // Patrón: Una letra o un guion bajo seguido de cero o más letras, números o guiones bajos
-            String patronIdentificador = "[a-zA-Z_][a-zA-Z0-9_]*";
-
-            if (Pattern.matches(patronIdentificador, sCadena)) {
-                return true;
-            }
-
-            return false;
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error en la función isIdentificadorJava: " + e.getMessage());
-            return false;
-        }
-    }  
-    //     String sResultado = "";
-
-    //     String operadoresAritmeticos = aritmetico(sCadena);
-    //     sResultado = sResultado + operadoresAritmeticos;
-
-    //     String operadoresLogicos = logico(sCadena);
-    //     sResultado = sResultado + operadoresLogicos;
-
-    //     String operadoresComparativos = comparativo(sCadena);
-    //     sResultado = sResultado + operadoresComparativos;
-
-    //     return sResultado;
-    // }
 
     public static String aritmetico(String sCadena) {
         // Operadores aritméticos
@@ -60,7 +32,7 @@ public class expresiones {
         Pattern pattern = Pattern.compile(aritmetico);
         Matcher matcher = pattern.matcher(sCadena);
 
-        StringBuilder operadores = new StringBuilder("\nOperadores aritméticos encontrados: ");
+        StringBuilder operadores = new StringBuilder("\nOperadores aritmeticos encontrados: ");
         while (matcher.find()) {
             String operador = matcher.group();
             switch (operador) {
@@ -71,13 +43,13 @@ public class expresiones {
                     operadores.append("Resta ");
                     break;
                 case "*":
-                    operadores.append("Multiplicación ");
+                    operadores.append("Multiplicacion ");
                     break;
                 case "/":
-                    operadores.append("División ");
+                    operadores.append("Division ");
                     break;
                 case "%":
-                    operadores.append("Módulo ");
+                    operadores.append("Modulo ");
                     break;
                 case "**":
                     operadores.append("Exponente ");
@@ -98,7 +70,7 @@ public class expresiones {
         Pattern pattern = Pattern.compile(logico);
         Matcher matcher = pattern.matcher(sCadena);
 
-        StringBuilder operadores = new StringBuilder("\nOperadores lógicos encontrados: ");
+        StringBuilder operadores = new StringBuilder("\nOperadores logicos encontrados: ");
         while (matcher.find()) {
             String operador = matcher.group();
             switch (operador) {
@@ -152,27 +124,27 @@ public class expresiones {
         return operadores.toString();
     }
 
-    // public String getResult(String sCadena) {
-    //     String sResultado = "";
+    // Verifica que la cadena dada pertenece a la expresion regular de
+    // identificadores en Java
+    public static String isIdentificadorJava(String sCadena) {
+            // Patrón: Una letra o un guion bajo seguido de cero o más letras, números o
+            // guiones bajos
+            String patronIdentificador = "[a-zA-Z_][a-zA-Z0-9_]*";
 
-    // boolean numeros = analizarNumeros(sCadena);
-    //     sResultado = sResultado + numeros;
+            if (Pattern.matches(patronIdentificador, sCadena)) {
+                return "\nLa cadena es un identificador";
+            }
 
-    //     return sResultado;
-    // }
+            return "\nLa cadena NO es un identificador";
+    }
 
-    public static boolean analizarNumeros(String sCadena) {
+    public static String analizarNumeros(String sCadena) {
         // Expresión regular para identificar números del 0 al 9
-        String regexNumeros = "[0-9]";
+        String regexNumeros = "[0-9]+";
 
         if(Pattern.matches(regexNumeros, sCadena)){
-            return true;
+            return "\nLa cadena es una secuencia de numeros";
         }
-        return false;
+        return "\nLa cadena NO es una secuencia de numeros";
     }
-
-        
-    
-    
-    }
-
+}
