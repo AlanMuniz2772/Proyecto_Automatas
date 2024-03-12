@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 public class opciones {
 
 	// Esta clase maneja las opciones de los archivos
+	// Esta clase maneja las opciones de los archivos
 
 	private static File archivoEntrada;
 	private static File archivoSalida;
@@ -52,15 +53,15 @@ public class opciones {
 				// Leer cada línea del archivo y agregar las palabras separadas por espacios al ArrayList
 				while ((linea = lector.readLine()) != null) {
 					if (linea.length() > 0) {
-						String[] palabras = linea.split(" ");
-						for (String palabra : palabras) {
-							lResultaodsTemp.add(lenguajes.getResult(palabra));
-						}
+						
+							lResultaodsTemp.add(lenguajes.getResult(linea));
+						
 					}
 				}
 				lector.close();
 				listaDeResultados.addAll(lResultaodsTemp);
 				mostrarResultados(lResultaodsTemp);
+				
 			}
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Error en la función leerArchivo: " + e.getMessage());
@@ -84,12 +85,13 @@ public class opciones {
 
 					// Crear un objeto BufferedWriter para escribir texto de manera eficiente
 					BufferedWriter bufferEscritura = new BufferedWriter(escritor);
-
+					
 					// Iterar sobre la lista y escribir cada elemento en una nueva línea
 					for (String elemento : listaDeResultados) {
 						bufferEscritura.write(elemento);
 						bufferEscritura.newLine(); // Agregar una nueva línea después de cada elemento
 					}
+					
 
 					// Cerrar el BufferedWriter (esto también cierra el FileWriter)
 					bufferEscritura.close();
@@ -103,6 +105,7 @@ public class opciones {
 			JOptionPane.showMessageDialog(null, "Error en la función escribirEnArchivo: " + e.getMessage());
 		}
 	}
+
 
 	//Define el archivo de texto que sera de lectura
     public boolean setArchivoEntrada() {
