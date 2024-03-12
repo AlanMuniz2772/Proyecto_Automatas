@@ -17,11 +17,15 @@ public class Main {
                 "\n7. Definir direccion de archivo salida";
 
             char opcion;
+            
 
             // Almacena los resultados obtenidos de las cadenas procesadas
+            
 
             String input;
+            
 
+            
             do {
                 input = JOptionPane.showInputDialog(null, menu);
 
@@ -30,14 +34,17 @@ public class Main {
                 if (input == null) {
                     System.exit(0);
                 }
+                
 
                 opcion = input.charAt(0);
+                
 
             switch (opcion) {
                 case '1':
                     archivo.ingresoUnico();
                     break;
 
+                    
                     case '2':
                         archivo.leerArchivo();
                         break;
@@ -53,10 +60,12 @@ public class Main {
                     case '5':
                         archivo.escribirEnArchivo();
                         break;
+                    
 
                     case '6':
                         archivo.setArchivoEntrada();
                         break;
+                    
 
                 case '7':
                     archivo.setArchivoSalida();

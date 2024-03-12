@@ -11,7 +11,6 @@ import javax.swing.JOptionPane;
 public class opciones {
 
 	// Esta clase maneja las opciones de los archivos
-	// Esta clase maneja las opciones de los archivos
 
 	private static File archivoEntrada;
 	private static File archivoSalida;
