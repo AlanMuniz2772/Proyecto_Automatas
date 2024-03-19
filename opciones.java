@@ -35,18 +35,16 @@ public class opciones {
 
 		try {
 			if (archivoEntrada == null) {
-
 				bExists = setArchivoEntrada();
 			} else {
 				bExists = true;
 			}
 			if (!bExists) {
 				JOptionPane.showMessageDialog(null, "Primero tienes que definir tu archivo de entrada");
-
 			} else {
 				BufferedReader lector = new BufferedReader(new FileReader(archivoEntrada));
 				String linea;
-
+        
 				// Leer cada línea del archivo y agregarla al ArrayList
 				while ((linea = lector.readLine()) != null) {
 
