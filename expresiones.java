@@ -140,7 +140,7 @@ public class expresiones {
 
     public static String analizarNumeros(String sCadena) {
         // Expresión regular para identificar números del 0 al 9
-        String regexNumeros = "-?\\d+(\\.\\d+)?[dlf]";
+        String regexNumeros = "-?\\d+(\\.\\d+)?[dlf]?";
 
         if(Pattern.matches(regexNumeros, sCadena)){
             return "\nLa cadena es un numero en lenguaje C";
