@@ -166,7 +166,7 @@ public class opciones {
     }
 
 	//Ingreso de una sola linea
-	public void ingresoUnico () {
+	public static void ingresoUnico () {
 		String linea = JOptionPane.showInputDialog("Ingrese linea: ");
 		lineaObj line = expresiones.getLineaObj(linea, 1);
 		listaDeResultados.add(line.toString());

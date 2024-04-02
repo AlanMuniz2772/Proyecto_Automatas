@@ -32,7 +32,7 @@ public class Main {
                 
             switch (opcion) {
                 case '1':
-                    archivo.ingresoUnico();
+                    opciones.ingresoUnico();
                     break;
                     
                 case '2':
