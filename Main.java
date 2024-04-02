@@ -3,9 +3,8 @@ import javax.swing.JOptionPane;
 public class Main {
 
     public static opciones archivo = new opciones();
-    
 
-    // Menu
+    // AQUI SOLO SE DEBE TENER LA ESTRUCTURA DEL MENU DE LA APLIACION
     public static void main(String[] args) {
 
         String menu = "1. Ingresar cadena" + //
@@ -18,14 +17,8 @@ public class Main {
 
             char opcion;
             
-
-            // Almacena los resultados obtenidos de las cadenas procesadas
-            
-
             String input;
-            
-
-            
+  
             do {
                 input = JOptionPane.showInputDialog(null, menu);
 
@@ -35,19 +28,16 @@ public class Main {
                     System.exit(0);
                 }
                 
-
                 opcion = input.charAt(0);
                 
-
             switch (opcion) {
                 case '1':
                     archivo.ingresoUnico();
                     break;
-
                     
-                    case '2':
-                        archivo.leerArchivo();
-                        break;
+                case '2':
+                    archivo.leerArchivo();
+                    break;
 
                 case '3':
                     archivo.mostrarResultados(opciones.listaDeResultados);
@@ -57,20 +47,18 @@ public class Main {
                     archivo.limpiarResultados();
                     break;
 
-                    case '5':
-                        archivo.escribirEnArchivo();
-                        break;
-                    
+                case '5':
+                    archivo.escribirEnArchivo();
+                    break;
 
-                    case '6':
-                        archivo.setArchivoEntrada();
-                        break;
-                    
+                case '6':
+                    archivo.setArchivoEntrada();
+                    break;
 
                 case '7':
                     archivo.setArchivoSalida();
                     break;
-                    
+                
                 default:
                     JOptionPane.showMessageDialog(null, "Opcion no valida");
                     break;

@@ -5,25 +5,25 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
+//AQUI SOLO DEBE HABER LAS OPCIONES DIRECTAS DEL MENU
 public class opciones {
 
-	// Esta clase maneja las opciones de los archivos
 	// Esta clase maneja las opciones de los archivos
 
 	private static File archivoEntrada;
 	private static File archivoSalida;
 	public static ArrayList<String> listaDeResultados = new ArrayList<>();
-	public static expresiones lenguajes = new expresiones();
 
 	public void mostrarResultados(ArrayList<String> lResultados) {
 		try {
 			if (lResultados.size() > 0) {
 				String sResultados = "";
 				for (String result : lResultados) {
-					sResultados = sResultados + "\n" + result;
+					sResultados += result;
 				}
 				JOptionPane.showMessageDialog(null, sResultados, "Resultados", JOptionPane.INFORMATION_MESSAGE);
 			} else {
@@ -49,16 +49,18 @@ public class opciones {
 			} else {
 				BufferedReader lector = new BufferedReader(new FileReader(archivoEntrada));
 				String linea;
-
-				// Leer cada línea del archivo y agregar las palabras separadas por espacios al ArrayList
+				List<lineaObj> nuevoCodigo = new ArrayList<>();
+				int numLinea = 0;
+				// Leer cada línea del archivo y agregar la lineaObj a la lista
 				while ((linea = lector.readLine()) != null) {
-					if (linea.length() > 0) {
-						
-							lResultaodsTemp.add(lenguajes.getResult(linea));
-						
-					}
+					numLinea++;
+					nuevoCodigo.add(expresiones.getLineaObj(linea, numLinea));
 				}
 				lector.close();
+				//Agrega el resultado string a la lista de resultados temporal
+				for (lineaObj line : nuevoCodigo) {
+					lResultaodsTemp.add(line.toString());
+				}
 				listaDeResultados.addAll(lResultaodsTemp);
 				mostrarResultados(lResultaodsTemp);
 				
@@ -89,10 +91,8 @@ public class opciones {
 					// Iterar sobre la lista y escribir cada elemento en una nueva línea
 					for (String elemento : listaDeResultados) {
 						bufferEscritura.write(elemento);
-						bufferEscritura.newLine(); // Agregar una nueva línea después de cada elemento
 					}
 					
-
 					// Cerrar el BufferedWriter (esto también cierra el FileWriter)
 					bufferEscritura.close();
 
@@ -165,15 +165,18 @@ public class opciones {
         }	
     }
 
+	//Ingreso de una sola linea
 	public void ingresoUnico () {
-		String sCadena = JOptionPane.showInputDialog("Ingrese cadena: ");
-		String sResult = lenguajes.getResult(sCadena);
-		listaDeResultados.add(sResult);
-		JOptionPane.showMessageDialog(null, sResult);
+		String linea = JOptionPane.showInputDialog("Ingrese linea: ");
+		lineaObj line = expresiones.getLineaObj(linea, 1);
+		listaDeResultados.add(line.toString());
+		JOptionPane.showMessageDialog(null, line.toString());
 	}
 
+	//Limpia la lista de resultados
 	public void limpiarResultados() {
 		listaDeResultados.clear();
 		JOptionPane.showMessageDialog(null, "Lista de resultados limpiada");
 	}
 }
+
