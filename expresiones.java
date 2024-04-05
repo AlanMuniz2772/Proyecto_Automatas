@@ -27,38 +27,29 @@ public class expresiones {
 
     public static String aritmetico(String sCadena) {
         // Operadores aritméticos
-        String aritmetico = "\\*\\*|//|[+\\-%\\*\\/]"; // Expresión regular para identificar operadores aritméticos
+        String aritmetico = "[+\\-*/]"; // Expresión regular para identificar operadores aritméticos
 
         Pattern pattern = Pattern.compile(aritmetico);
         Matcher matcher = pattern.matcher(sCadena);
 
-        StringBuilder operadores = new StringBuilder("\nOperadores aritmeticos encontrados: ");
+        StringBuilder operadores = new StringBuilder("\nOperadores aritmeticos encontrados: \n");
         while (matcher.find()) {
             String operador = matcher.group();
             switch (operador) {
                 case "+":
-                    operadores.append("Suma ");
+                    operadores.append("+, -24, -1, ");
                     break;
                 case "-":
-                    operadores.append("Resta ");
+                    operadores.append("-, -25, -1, ");
                     break;
                 case "*":
-                    operadores.append("Multiplicacion ");
+                    operadores.append("*, -21, -1, ");
                     break;
                 case "/":
-                    operadores.append("Division ");
-                    break;
-                case "%":
-                    operadores.append("Modulo ");
-                    break;
-                case "**":
-                    operadores.append("Exponente ");
-                    break;
-                case "//":
-                    operadores.append("Cociente ");
+                    operadores.append("/, -22, -1, ");
                     break;
             }
-            operadores.append("(").append(operador).append(") ");
+            operadores.append("\n");
         }
         return operadores.toString();
     }
