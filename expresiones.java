@@ -20,16 +20,20 @@ public class expresiones {
         if (matchRegex(sCadena, aritmeticoRegex)) {
             String operadoresAritmeticos = aritmetico(sCadena);
             sResultado += operadoresAritmeticos;
-        } else if (matchRegex(sCadena, logicoRegex)) {
+        }
+        if (matchRegex(sCadena, logicoRegex)) {
             String operadoresLogicos = logico(sCadena);
             sResultado += operadoresLogicos;
-        } else if (matchRegex(sCadena, comparativoRegex)) {
+        }
+        if (matchRegex(sCadena, comparativoRegex)) {
             String operadoresComparativos = comparativo(sCadena);
             sResultado += operadoresComparativos;
-        } else if (matchRegex(sCadena, identificadorJavaRegex)) {
+        }
+        if (matchRegex(sCadena, identificadorJavaRegex)) {
             String identificadorJava = isIdentificadorJava(sCadena);
             sResultado += identificadorJava;
-        } else if (matchRegex(sCadena, numerosRegex)) {
+        }
+        if (matchRegex(sCadena, numerosRegex)) {
             String identificadorNumeros = analizarNumeros(sCadena);
             sResultado += identificadorNumeros;
         }
