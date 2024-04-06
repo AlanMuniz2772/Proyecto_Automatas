@@ -2,10 +2,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class expresiones {
+    private static int numeroLinea = 1;
 
     // Busca cual expresion regular es la coincidencia pra la cadena dada
     public String getResult(String sCadena) {
-        String sResultado = "\n" + sCadena;
+        String sResultado = sCadena;
 
         // Expresiones regulares
         String aritmeticoRegex = "[+\\-*/]";
@@ -37,7 +38,7 @@ public class expresiones {
             String identificadorNumeros = analizarNumeros(sCadena);
             sResultado += identificadorNumeros;
         }
-
+        numeroLinea++;
         return sResultado;
     }
 
@@ -56,24 +57,23 @@ public class expresiones {
         Pattern pattern = Pattern.compile(aritmetico);
         Matcher matcher = pattern.matcher(sCadena);
 
-        StringBuilder operadores = new StringBuilder("\n");
+        StringBuilder operadores = new StringBuilder();
         while (matcher.find()) {
             String operador = matcher.group();
             switch (operador) {
                 case "+":
-                    operadores.append("+, -24, -1, ");
+                    operadores.append("+, -24, -1, " + numeroLinea + "\n");
                     break;
                 case "-":
-                    operadores.append("-, -25, -1, ");
+                    operadores.append("-, -25, -1, " + numeroLinea + "\n");
                     break;
                 case "*":
-                    operadores.append("*, -21, -1, ");
+                    operadores.append("*, -21, -1, " + numeroLinea + "\n");
                     break;
                 case "/":
-                    operadores.append("/, -22, -1, ");
+                    operadores.append("/, -22, -1, " + numeroLinea + "\n");
                     break;
             }
-            operadores.append("\n");
         }
         return operadores.toString();
     }
@@ -85,21 +85,20 @@ public class expresiones {
         Pattern pattern = Pattern.compile(logico);
         Matcher matcher = pattern.matcher(sCadena);
 
-        StringBuilder operadores = new StringBuilder("\n");
+        StringBuilder operadores = new StringBuilder();
         while (matcher.find()) {
             String operador = matcher.group();
             switch (operador) {
                 case "&&":
-                    operadores.append("&&, -41, -1, ");
+                    operadores.append("&&, -41, -1, " + numeroLinea + "\n");
                     break;
                 case "||":
-                    operadores.append("||, -42, -1, ");
+                    operadores.append("||, -42, -1, " + numeroLinea + "\n");
                     break;
                 case "!":
-                    operadores.append("!, -43, -1, ");
+                    operadores.append("!, -43, -1, " + numeroLinea + "\n");
                     break;
             }
-            operadores.append("\n");
         }
         return operadores.toString();
     }
@@ -111,30 +110,29 @@ public class expresiones {
         Pattern pattern = Pattern.compile(comparativo);
         Matcher matcher = pattern.matcher(sCadena);
 
-        StringBuilder operadores = new StringBuilder("\n");
+        StringBuilder operadores = new StringBuilder();
         while (matcher.find()) {
             String operador = matcher.group();
             switch (operador) {
                 case ">":
-                    operadores.append(">, -33, -1, ");
+                    operadores.append(">, -33, -1, " + numeroLinea + "\n");
                     break;
                 case "<":
-                    operadores.append("<, -31, -1, ");
+                    operadores.append("<, -31, -1, " + numeroLinea + "\n");
                     break;
                 case "==":
-                    operadores.append("==, -35, -1, ");
+                    operadores.append("==, -35, -1, " + numeroLinea + "\n");
                     break;
                 case ">=":
-                    operadores.append(">=, -34, -1, ");
+                    operadores.append(">=, -34, -1, " + numeroLinea + "\n");
                     break;
                 case "<=":
-                    operadores.append("<=, -32, -1, ");
+                    operadores.append("<=, -32, -1, " + numeroLinea + "\n");
                     break;
                 case "!=":
-                    operadores.append("!=, -36, -1, ");
+                    operadores.append("!=, -36, -1, " + numeroLinea + "\n");
                     break;
             }
-            operadores.append("\n");
         }
         return operadores.toString();
     }
@@ -150,7 +148,7 @@ public class expresiones {
             return "\nLa cadena es un identificador";
         }
 
-        return "\n";
+        return "";
     }
 
     public static String analizarNumeros(String sCadena) {
@@ -160,6 +158,6 @@ public class expresiones {
         if (Pattern.matches(regexNumeros, sCadena)) {
             return "\nLa cadena es un numero en lenguaje C";
         }
-        return "\n";
+        return "";
     }
 }
