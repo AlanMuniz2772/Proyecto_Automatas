@@ -6,12 +6,13 @@ public class expresiones {
 
     // Busca cual expresion regular es la coincidencia pra la cadena dada
     public String getResult(String sCadena) {
-        String sResultado = sCadena;
+        String sResultado = "";
 
         // Expresiones regulares
         String aritmeticoRegex = "[+\\-*/]";
         String logicoRegex = "[&|]{2}|!"; // Aquí iría tu expresión regular para operadores lógicos
         String comparativoRegex = "[<>!]=?"; // Aquí iría tu expresión regular para operadores comparativos
+        String palabrasReservadasRegex = "\\b(program|begin|end|read|write|if|else|while|repeat|until|int|real|string|bool|var|then|do)\\b";
         String identificadorJavaRegex = "\\$*_*[a-zA-Z]+[a-zA-Z0-9_$]*"; // Aquí iría tu expresión regular para
                                                                          // identificadores de Java
         String numerosRegex = "-?\\d+(\\.\\d+)?[dlf]?"; // Aquí iría tu expresión regular para números
@@ -29,6 +30,10 @@ public class expresiones {
         if (matchRegex(sCadena, comparativoRegex)) {
             String operadoresComparativos = comparativo(sCadena);
             sResultado += operadoresComparativos;
+        }
+        if (matchRegex(sCadena, palabrasReservadasRegex)) {
+            String palabrasReservadas = reservadas(sCadena);
+            sResultado += palabrasReservadas;
         }
         if (matchRegex(sCadena, identificadorJavaRegex)) {
             String identificadorJava = isIdentificadorJava(sCadena);
@@ -132,6 +137,73 @@ public class expresiones {
                 case "!=":
                     operadores.append("!=, -36, -1, " + numeroLinea + "\n");
                     break;
+            }
+        }
+        return operadores.toString();
+    }
+
+    public static String reservadas(String sCadena) {
+        // Operadores comparativos
+        String palabrasReservadasRegex = "\\b(program|begin|end|read|write|if|else|while|repeat|until|int|real|string|bool|var|then|do)\\b";
+
+        Pattern pattern = Pattern.compile(palabrasReservadasRegex);
+        Matcher matcher = pattern.matcher(sCadena);
+
+        StringBuilder operadores = new StringBuilder();
+        while (matcher.find()) {
+            String palabraReservada = matcher.group();
+            switch (palabraReservada) {
+                case "program":
+                operadores.append("program, -1, -1" + numeroLinea + "\n");
+                break;
+            case "begin":
+                operadores.append("begin, -2, -1" + numeroLinea + "\n");
+                break;
+            case "end":
+                operadores.append("end, -3, -1" + numeroLinea + "\n");
+                break;
+            case "read":
+                operadores.append("read, -4, -1" + numeroLinea + "\n");
+                break;
+            case "write":
+                operadores.append("write, -5, -1" + numeroLinea + "\n");
+                break;
+            case "if":
+                operadores.append("if, -6, -1" + numeroLinea + "\n");
+                break;
+            case "else":
+                operadores.append("else, -7, -1" + numeroLinea + "\n");
+                break;
+            case "while":
+                operadores.append("while, -8, -1" + numeroLinea + "\n");
+                break;
+            case "repeat":
+                operadores.append("repeat, -9, -1" + numeroLinea + "\n");
+                break;
+            case "until":
+                operadores.append("until, -10, -1" + numeroLinea + "\n");
+                break;
+            case "int":
+                operadores.append("int, -11, -1" + numeroLinea + "\n");
+                break;
+            case "real":
+                operadores.append("real, -12, -1" + numeroLinea + "\n");
+                break;
+            case "string":
+                operadores.append("string, -13, -1" + numeroLinea + "\n");
+                break;
+            case "bool":
+                operadores.append("bool, -14, -1" + numeroLinea + "\n");
+                break;
+            case "var":
+                operadores.append("var, -15, -1" + numeroLinea + "\n");
+                break;
+            case "then":
+                operadores.append("then, -16, -1" + numeroLinea + "\n");
+                break;
+            case "do":
+                operadores.append("do, -17, -1" + numeroLinea + "\n");
+                break;
             }
         }
         return operadores.toString();
