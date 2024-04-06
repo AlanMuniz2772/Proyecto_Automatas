@@ -32,7 +32,7 @@ public class expresiones {
         Pattern pattern = Pattern.compile(aritmetico);
         Matcher matcher = pattern.matcher(sCadena);
 
-        StringBuilder operadores = new StringBuilder("\nOperadores aritmeticos encontrados: \n");
+        StringBuilder operadores = new StringBuilder("\n");
         while (matcher.find()) {
             String operador = matcher.group();
             switch (operador) {
@@ -61,7 +61,7 @@ public class expresiones {
         Pattern pattern = Pattern.compile(logico);
         Matcher matcher = pattern.matcher(sCadena);
 
-        StringBuilder operadores = new StringBuilder("\nOperadores logicos encontrados: \n");
+        StringBuilder operadores = new StringBuilder("\n");
         while (matcher.find()) {
             String operador = matcher.group();
             switch (operador) {
@@ -87,30 +87,30 @@ public class expresiones {
         Pattern pattern = Pattern.compile(comparativo);
         Matcher matcher = pattern.matcher(sCadena);
 
-        StringBuilder operadores = new StringBuilder("\nOperadores comparativos encontrados: ");
+        StringBuilder operadores = new StringBuilder("\n");
         while (matcher.find()) {
             String operador = matcher.group();
             switch (operador) {
                 case ">":
-                    operadores.append("Mayor que ");
+                    operadores.append(">, -33, -1, ");
                     break;
                 case "<":
-                    operadores.append("Menor que ");
+                    operadores.append("<, -31, -1, ");
                     break;
                 case "==":
-                    operadores.append("Igual ");
+                    operadores.append("==, -35, -1, ");
                     break;
                 case ">=":
-                    operadores.append("Mayor o igual que ");
+                    operadores.append(">=, -34, -1, ");
                     break;
                 case "<=":
-                    operadores.append("Menor o igual que ");
+                    operadores.append("<=, -32, -1, ");
                     break;
                 case "!=":
-                    operadores.append("Diferente ");
+                    operadores.append("!=, -36, -1, ");
                     break;
             }
-            operadores.append("(").append(operador).append(") ");
+            operadores.append("\n");
         }
         return operadores.toString();
     }
@@ -126,7 +126,7 @@ public class expresiones {
                 return "\nLa cadena es un identificador";
             }
 
-            return "\nLa cadena NO es un identificador";
+            return "\n";
     }
 
     public static String analizarNumeros(String sCadena) {
@@ -136,6 +136,6 @@ public class expresiones {
         if(Pattern.matches(regexNumeros, sCadena)){
             return "\nLa cadena es un numero en lenguaje C";
         }
-        return "\nLa cadena NO es un numero en lenguaje C";
+        return "\n";
     }
 }
