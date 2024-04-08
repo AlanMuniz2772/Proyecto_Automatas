@@ -8,51 +8,23 @@ public class expresiones {
     public String getResult(String sCadena) {
         String sResultado = "";
 
-        // Expresiones regulares
-        String aritmeticoRegex = "[+\\-*/]";
-        String logicoRegex = "[&|]{2}|!"; // Aquí iría tu expresión regular para operadores lógicos
-        String comparativoRegex = "<=|>=|==|!=|<|>|:="; // Aquí iría tu expresión regular para operadores comparativos
-        String palabrasReservadasRegex = "\\b(program|begin|end|read|write|if|else|while|repeat|until|int|real|string|bool|var|then|do)\\b";
-        String identificadorJavaRegex = "\\$*_*[a-zA-Z]+[a-zA-Z0-9_$]*"; // Aquí iría tu expresión regular para
-                                                                         // identificadores de Java
-        String numerosRegex = "-?\\d+(\\.\\d+)?[dlf]?"; // Aquí iría tu expresión regular para números
-
         // Se prueba cada expresión regular y se llama al método correspondiente si hay
         // una coincidencia
-        if (matchRegex(sCadena, aritmeticoRegex)) {
-            String operadoresAritmeticos = aritmetico(sCadena);
-            sResultado += operadoresAritmeticos;
-        }
-        if (matchRegex(sCadena, logicoRegex)) {
-            String operadoresLogicos = logico(sCadena);
-            sResultado += operadoresLogicos;
-        }
-        if (matchRegex(sCadena, comparativoRegex)) {
-            String operadoresComparativos = comparativo(sCadena);
-            sResultado += operadoresComparativos;
-        }
-        if (matchRegex(sCadena, palabrasReservadasRegex)) {
-            String palabrasReservadas = reservadas(sCadena);
-            sResultado += palabrasReservadas;
-        }
-        if (matchRegex(sCadena, identificadorJavaRegex)) {
-            String identificadorJava = isIdentificadorJava(sCadena);
-            sResultado += identificadorJava;
-        }
-        if (matchRegex(sCadena, numerosRegex)) {
-            String identificadorNumeros = analizarNumeros(sCadena);
-            sResultado += identificadorNumeros;
-        }
+        String operadoresAritmeticos = aritmetico(sCadena);
+        sResultado += operadoresAritmeticos;
+        String operadoresLogicos = logico(sCadena);
+        sResultado += operadoresLogicos;
+        String operadoresComparativos = comparativo(sCadena);
+        sResultado += operadoresComparativos;
+        String palabrasReservadas = reservadas(sCadena);
+        sResultado += palabrasReservadas;
+        String identificadorJava = isIdentificadorJava(sCadena);
+        sResultado += identificadorJava;
+        String identificadorNumeros = analizarNumeros(sCadena);
+        sResultado += identificadorNumeros;
+
         numeroLinea++;
         return sResultado;
-    }
-
-    // Método para verificar si hay una coincidencia entre la cadena y la expresión
-    // regular
-    private boolean matchRegex(String sCadena, String regex) {
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(sCadena);
-        return matcher.find();
     }
 
     public static String aritmetico(String sCadena) {
