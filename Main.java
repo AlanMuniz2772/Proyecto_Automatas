@@ -7,6 +7,7 @@ public class Main {
 
     public static opciones archivo = new opciones();
     public static expresiones lenguajes = new expresiones();
+    public static int numeroLinea = 1;
 
     // Menu
     public static void main(String[] args) {
@@ -41,13 +42,13 @@ public class Main {
                 switch (opcion) {
                     case '1':
                         String sCadena = JOptionPane.showInputDialog("Ingrese cadena: ");
-                        String sResult = lenguajes.getResult(sCadena);
+                        String sResult = lenguajes.getResult(sCadena, numeroLinea);
                         listaDeResultados.add(sResult);
                         JOptionPane.showMessageDialog(null, sResult);
                         break;
 
                     case '2':
-                        archivo.leerArchivo();
+                        archivo.leerArchivo(numeroLinea);
                         break;
 
                     case '3':

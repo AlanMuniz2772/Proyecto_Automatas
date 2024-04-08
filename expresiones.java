@@ -2,21 +2,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class expresiones {
-    private static int numeroLinea = 1;
 
     // Busca cual expresion regular es la coincidencia pra la cadena dada
-    public String getResult(String sCadena) {
+    public String getResult(String sCadena, int numeroLinea) {
         String sResultado = "";
 
         // Se prueba cada expresión regular y se llama al método correspondiente si hay
         // una coincidencia
-        String operadoresAritmeticos = aritmetico(sCadena);
+        String operadoresAritmeticos = aritmetico(sCadena, numeroLinea);
         sResultado += operadoresAritmeticos;
-        String operadoresLogicos = logico(sCadena);
+        String operadoresLogicos = logico(sCadena, numeroLinea);
         sResultado += operadoresLogicos;
-        String operadoresComparativos = comparativo(sCadena);
+        String operadoresComparativos = comparativo(sCadena, numeroLinea);
         sResultado += operadoresComparativos;
-        String palabrasReservadas = reservadas(sCadena);
+        String palabrasReservadas = reservadas(sCadena, numeroLinea);
         sResultado += palabrasReservadas;
         String identificadorJava = isIdentificadorJava(sCadena);
         sResultado += identificadorJava;
@@ -27,7 +26,7 @@ public class expresiones {
         return sResultado;
     }
 
-    public static String aritmetico(String sCadena) {
+    public static String aritmetico(String sCadena, int numeroLinea) {
         // Operadores aritméticos
         String aritmetico = "[+\\-*/]"; // Expresión regular para identificar operadores aritméticos
 
@@ -55,7 +54,7 @@ public class expresiones {
         return operadores.toString();
     }
 
-    public static String logico(String sCadena) {
+    public static String logico(String sCadena, int numeroLinea) {
         // Operadores lógicos
         String logico = "[&|]{2}|!"; // Expresión regular para identificar operadores lógicos
 
@@ -80,7 +79,7 @@ public class expresiones {
         return operadores.toString();
     }
 
-    public static String comparativo(String sCadena) {
+    public static String comparativo(String sCadena, int numeroLinea) {
         // Operadores comparativos
         String comparativo = "<=|>=|==|!=|<|>|:="; // Expresión regular para identificar operadores de comparación
 
@@ -117,7 +116,7 @@ public class expresiones {
         return operadores.toString();
     }
 
-    public static String reservadas(String sCadena) {
+    public static String reservadas(String sCadena, int numeroLinea) {
         // Operadores comparativos
         String palabrasReservadasRegex = "\\b(program|begin|end|read|write|if|else|while|repeat|until|int|real|string|bool|var|then|do)\\b";
 

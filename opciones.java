@@ -29,7 +29,7 @@ public class opciones {
 		}
 	}
 
-	public void leerArchivo() {
+	public void leerArchivo(int numeroLinea) {
 
 		boolean bExists = false;
 
@@ -51,8 +51,9 @@ public class opciones {
 				while ((linea = lector.readLine()) != null) {
 
 					if (linea.length() > 0) {
-						listaDeResultados.add(lenguajes.getResult(linea));
+						listaDeResultados.add(lenguajes.getResult(linea, numeroLinea));
 					}
+					numeroLinea++;
 				}
 				lector.close();
 				JOptionPane.showMessageDialog(null, "Cadenas recopiladas correctamente");
