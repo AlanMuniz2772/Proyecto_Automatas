@@ -13,7 +13,14 @@ public class expresiones {
         List<lexemaObj> lexemas = getLineaCommentString(linea, lineNumber);
         //AQUI ABAJO AGREGUEN SUS FUNCIONES, PUEDEN MOVERLAS A COMO SEA NECESARIO
         lexemas = getCaracterEsp(lexemas, lineNumber);
+        lexemas = getOpAritmetico(lexemas, lineNumber);
+        lexemas = getOpRelacional(lexemas, lineNumber);
+        lexemas = getNumReal(lexemas, lineNumber);
+        lexemas = getNumEntero(lexemas, lineNumber);
+        lexemas = getOpLogico(lexemas, lineNumber);
         lexemas = getIdentificadores(lexemas, lineNumber);
+        lexemas = getValorLogico(lexemas, lineNumber);
+        lexemas = getPalabrasReservadas(lexemas, lineNumber);
         //AQUI ARRIBA AGREGUEN SUS FUNCIONES
         lineaObj line = new lineaObj(lineNumber, lexemas);
         return line;            
@@ -36,7 +43,7 @@ public class expresiones {
                     strLexema = general.getString(cadenaTemp, listaTempCadenas);
                     if (strLexema != null) {
                         nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
-                        nuevaLinea.add(new lexemaObj(strLexema, general.getCompLexicoValue("stringLinea"), -1, lineNumber));
+                        nuevaLinea.add(new lexemaObj(strLexema, general.getCompLexicoValue("cCadena"), -1, lineNumber));
                         foundLexema = true;
                         break;
                     }
@@ -61,11 +68,22 @@ public class expresiones {
                 }
             }
             if (foundLexema) {
-                String spliter = nuevaLinea.get(nuevaLinea.size() - 1).valorCadena;
-                String[] lineaDividida = linea.split(spliter, 2);
-                if(lineaDividida.length > 1){
-                    nuevaLinea.addAll(getLineaCommentString(lineaDividida[1], lineNumber));
+                lexemaObj lexemaUltimo = nuevaLinea.get(nuevaLinea.size() - 1);
+                String spliter = "";
+                if (lexemaUltimo.token == -78) {
+                    spliter = "//";
+                    String[] lineaDividida = linea.split(spliter, 3);
+                    if(lineaDividida.length > 2){
+                        nuevaLinea.addAll(getLineaCommentString(lineaDividida[2], lineNumber));
+                    }
+                }else{
+                    spliter = lexemaUltimo.valorCadena;
+                    String[] lineaDividida = linea.split(spliter, 2);
+                    if(lineaDividida.length > 1){
+                        nuevaLinea.addAll(getLineaCommentString(lineaDividida[1], lineNumber));
+                    }
                 }
+                
                 break;
             }
             nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
@@ -86,7 +104,7 @@ public class expresiones {
                 String nuevaCadena = "";
                 for (int indexCaracter = 0; indexCaracter < cadena.length(); indexCaracter++){
                     char caracter = cadena.charAt(indexCaracter);
-                    if(caracter == '(' || caracter == ')' || caracter == ';' || caracter == ',' || caracter == ':'){
+                    if(caracter == '(' || caracter == ')' || caracter == ';' || caracter == ','){
                         String compLexico = Character.toString(caracter);
                         int token = general.getCompLexicoValue(compLexico);//obtenemos el token correspondiente al caracter, desde el archivo txt
                         if(!nuevaCadena.isEmpty()){
@@ -95,6 +113,18 @@ public class expresiones {
                         //agregamos el caracter identificado a la lista de lexemas
                         nuevaLinea.add(new lexemaObj(String.valueOf(caracter), token, -1, lineNumber));
                         nuevaCadena = "";//reiniciamos la variable para seguir almacenando caracteres
+                    }else if(caracter == ':'){
+                        if(indexCaracter + 1 < cadena.length() && cadena.charAt(indexCaracter + 1) == '='){
+                            nuevaCadena += caracter;
+                        }else{
+                            String compLexico = Character.toString(caracter);
+                            int token = general.getCompLexicoValue(compLexico);
+                            if(!nuevaCadena.isEmpty()){
+                                nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
+                            }
+                            nuevaLinea.add(new lexemaObj(compLexico, token, -1, lineNumber));
+                            nuevaCadena = "";
+                        }
                     }
                     else{
                         nuevaCadena += caracter;//si no se identifico con los caracteres, se sigue creando la cadena
@@ -155,113 +185,266 @@ public class expresiones {
         return nuevaLinea;
     }
 
-    public static String aritmetico(String sCadena) {
-        // Operadores aritméticos
-        String aritmetico = "\\*\\*|//|[+\\-%\\*\\/]"; // Expresión regular para identificar operadores aritméticos
-
-        Pattern pattern = Pattern.compile(aritmetico);
-        Matcher matcher = pattern.matcher(sCadena);
-
-        StringBuilder operadores = new StringBuilder("\nOperadores aritmeticos encontrados: ");
-        while (matcher.find()) {
-            String operador = matcher.group();
-            switch (operador) {
-                case "+":
-                    operadores.append("Suma ");
-                    break;
-                case "-":
-                    operadores.append("Resta ");
-                    break;
-                case "*":
-                    operadores.append("Multiplicacion ");
-                    break;
-                case "/":
-                    operadores.append("Division ");
-                    break;
-                case "%":
-                    operadores.append("Modulo ");
-                    break;
-                case "**":
-                    operadores.append("Exponente ");
-                    break;
-                case "//":
-                    operadores.append("Cociente ");
-                    break;
+    public static List<lexemaObj> getOpAritmetico(List<lexemaObj> lexemas, int lineNumber){
+        List<lexemaObj> nuevaLinea = new ArrayList<>();
+        for(lexemaObj lexema: lexemas){
+            if(lexema.token == 0){
+                String cadena = lexema.valorCadena;
+                String nuevaCadena = "";
+                for (int indexCaracter = 0; indexCaracter < cadena.length(); indexCaracter++){
+                    char caracter = cadena.charAt(indexCaracter);
+                    if(caracter == '+' || caracter == '*' || caracter == '/'){
+                        String compLexico = Character.toString(caracter);
+                        int token = general.getCompLexicoValue(compLexico);
+                        if(!nuevaCadena.isEmpty()){
+                            nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
+                        }
+                        nuevaLinea.add(new lexemaObj(String.valueOf(caracter), token, -1, lineNumber));
+                        nuevaCadena = "";
+                    }else if(caracter == '-'){
+                        String cadenaTemp = cadena.substring(indexCaracter+1, cadena.length());
+                        if(cadenaTemp.matches("\\d+")){
+                            String compLexico = Character.toString(caracter);
+                            int token = general.getCompLexicoValue(compLexico);
+                            if(!nuevaCadena.isEmpty()){
+                                nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
+                            }
+                            nuevaLinea.add(new lexemaObj(compLexico, token, -1, lineNumber));
+                            nuevaCadena = "";
+                            
+                        }else if(cadenaTemp.matches("\\d+\\.\\d+")){
+                            nuevaCadena += caracter;
+                        }else{
+                            
+                            String compLexico = Character.toString(caracter);
+                            int token = general.getCompLexicoValue(compLexico);
+                            if(!nuevaCadena.isEmpty()){
+                                nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
+                            }
+                            nuevaLinea.add(new lexemaObj(compLexico, token, -1, lineNumber));
+                            nuevaCadena = "";
+                            
+                        }
+                    }else if(caracter == ':'){
+                        if(indexCaracter + 1 < cadena.length() && cadena.charAt(indexCaracter + 1) == '='){
+                            String compLexico = ":=";
+                            int token = general.getCompLexicoValue(compLexico);
+                            if(!nuevaCadena.isEmpty()){
+                                nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
+                            }
+                            nuevaLinea.add(new lexemaObj(compLexico, token, -1, lineNumber));
+                            nuevaCadena = "";
+                            indexCaracter++;
+                        }else{
+                            nuevaCadena += caracter;
+                        }
+                    }else{
+                        nuevaCadena += caracter;
+                    }
+                }
+                if(!nuevaCadena.isEmpty()){
+                    //volvemos a almacenar la cadena como lexema sin identificar
+                    nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
+                }
+            }else{
+                nuevaLinea.add(lexema);
             }
-            operadores.append("(").append(operador).append(") ");
         }
-        return operadores.toString();
+        return nuevaLinea;
     }
 
-    public static String logico(String sCadena) {
-        // Operadores lógicos
-        String logico = "AND|OR|NOT"; // Expresión regular para identificar operadores lógicos
-
-        Pattern pattern = Pattern.compile(logico);
-        Matcher matcher = pattern.matcher(sCadena);
-
-        StringBuilder operadores = new StringBuilder("\nOperadores logicos encontrados: ");
-        while (matcher.find()) {
-            String operador = matcher.group();
-            switch (operador) {
-                case "AND":
-                    operadores.append("AND ");
-                    break;
-                case "OR":
-                    operadores.append("OR ");
-                    break;
-                case "NOT":
-                    operadores.append("NOT ");
-                    break;
+    public static List<lexemaObj> getOpRelacional(List<lexemaObj> lexemas, int lineNumber){
+        List<lexemaObj> nuevaLinea = new ArrayList<>();
+        for(lexemaObj lexema: lexemas){
+            if(lexema.token == 0){
+                String cadena = lexema.valorCadena;
+                String nuevaCadena = "";
+                for (int indexCaracter = 0; indexCaracter < cadena.length(); indexCaracter++){
+                    char caracter = cadena.charAt(indexCaracter);
+                    if(caracter == '<' || caracter == '>'){
+                        if(!nuevaCadena.isEmpty()){
+                            nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
+                        }
+                        nuevaCadena = "";
+                        if(indexCaracter + 1 < cadena.length() && cadena.charAt(indexCaracter + 1) == '='){
+                            String compLexico = Character.toString(caracter) + "=";
+                            int token = general.getCompLexicoValue(compLexico);
+                            nuevaLinea.add(new lexemaObj(compLexico, token, -1, lineNumber));
+                            indexCaracter++;
+                        }else{
+                            String compLexico = Character.toString(caracter);
+                            int token = general.getCompLexicoValue(compLexico);
+                            nuevaLinea.add(new lexemaObj(compLexico, token, -1, lineNumber));
+                        }
+                    
+                    }else if((caracter == '='|| caracter == '!') && indexCaracter + 1 < cadena.length() && cadena.charAt(indexCaracter + 1) == '='){
+                        if(!nuevaCadena.isEmpty()){
+                            nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
+                        }
+                        nuevaCadena = "";
+                        String compLexico = Character.toString(caracter)+"=";
+                        int token = general.getCompLexicoValue(compLexico);
+                        nuevaLinea.add(new lexemaObj(compLexico, token, -1, lineNumber));
+                        indexCaracter++;
+                    }
+                    else{
+                        nuevaCadena += caracter;
+                    }
+                }
+                if(!nuevaCadena.isEmpty()){
+                    //volvemos a almacenar la cadena como lexema sin identificar
+                    nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
+                }
+            }else{
+                nuevaLinea.add(lexema);
             }
-            operadores.append("(").append(operador).append(") ");
         }
-        return operadores.toString();
+        return nuevaLinea;
     }
 
-    public static String comparativo(String sCadena) {
-        // Operadores comparativos
-        String comparativo = "[<>!]=?"; // Expresión regular para identificar operadores de comparación
-
-        Pattern pattern = Pattern.compile(comparativo);
-        Matcher matcher = pattern.matcher(sCadena);
-
-        StringBuilder operadores = new StringBuilder("\nOperadores comparativos encontrados: ");
-        while (matcher.find()) {
-            String operador = matcher.group();
-            switch (operador) {
-                case ">":
-                    operadores.append("Mayor que ");
-                    break;
-                case "<":
-                    operadores.append("Menor que ");
-                    break;
-                case "==":
-                    operadores.append("Igual ");
-                    break;
-                case ">=":
-                    operadores.append("Mayor o igual que ");
-                    break;
-                case "<=":
-                    operadores.append("Menor o igual que ");
-                    break;
-                case "!=":
-                    operadores.append("Diferente ");
-                    break;
+    public static List<lexemaObj> getOpLogico(List<lexemaObj> lexemas, int lineNumber){
+        List<lexemaObj> nuevaLinea = new ArrayList<>();
+        for(lexemaObj lexema: lexemas){
+            if(lexema.token == 0){
+                String cadena = lexema.valorCadena;
+                String nuevaCadena = "";
+                for (int indexCaracter = 0; indexCaracter < cadena.length(); indexCaracter++){
+                    char caracter = cadena.charAt(indexCaracter);
+                    if(caracter == '&' && indexCaracter + 1 < cadena.length() && cadena.charAt(indexCaracter + 1) == '&'){
+                        if(nuevaCadena.matches("^[a-zA-Z][a-zA-Z0-9_]*")){
+                            nuevaCadena += caracter;
+                        }else{
+                            if(!nuevaCadena.isEmpty()){
+                                nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
+                            }
+                            nuevaCadena = "";
+                            String compLexico = "&&";
+                            int token = general.getCompLexicoValue(compLexico);
+                            nuevaLinea.add(new lexemaObj(compLexico, token, -1, lineNumber));
+                            indexCaracter++;
+                        }
+                           
+                    }else if(caracter == '|' && indexCaracter + 1 < cadena.length() && cadena.charAt(indexCaracter + 1) == '|'){
+                        if(!nuevaCadena.isEmpty()){
+                            nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
+                        }
+                        nuevaCadena = "";
+                        String compLexico = "||";
+                        int token = general.getCompLexicoValue(compLexico);
+                        nuevaLinea.add(new lexemaObj(compLexico, token, -1, lineNumber));
+                        indexCaracter++;
+                        
+                    }else if(caracter == '!'){
+                        if(indexCaracter + 1 < cadena.length() && cadena.charAt(indexCaracter + 1) == '='){
+                            nuevaCadena += caracter;
+                        }else{
+                            if(!nuevaCadena.isEmpty()){
+                                nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
+                            }
+                            nuevaCadena = "";
+                            String compLexico = Character.toString(caracter);
+                            int token = general.getCompLexicoValue(compLexico);
+                            nuevaLinea.add(new lexemaObj(compLexico, token, -1, lineNumber));
+                        }
+                    }
+                    else{
+                        nuevaCadena += caracter;
+                    }
+                }
+                if(!nuevaCadena.isEmpty()){
+                    //volvemos a almacenar la cadena como lexema sin identificar
+                    nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
+                }
+            }else{
+                nuevaLinea.add(lexema);
             }
-            operadores.append("(").append(operador).append(") ");
         }
-        return operadores.toString();
+        return nuevaLinea;
     }
 
-
-    public static String analizarNumeros(String sCadena) {
-        // Expresión regular para identificar números del 0 al 9
-        String regexNumeros = "-?\\d+(\\.\\d+)?[dlf]";
-
-        if(Pattern.matches(regexNumeros, sCadena)){
-            return "\nLa cadena es un numero en lenguaje C";
+    public static List<lexemaObj> getNumEntero(List<lexemaObj> lexemas, int lineNumber){
+        List<lexemaObj> nuevaLinea = new ArrayList<>();
+        for(lexemaObj lexema: lexemas){
+            if(lexema.token == 0){
+                String cadena = lexema.valorCadena;
+                if (cadena.matches("\\d+")) {
+                    int token = general.getCompLexicoValue("cEntero");
+                    nuevaLinea.add(new lexemaObj(cadena, token, -1, lineNumber));
+                }else{
+                    nuevaLinea.add(lexema);
+                }
+            }else{
+                nuevaLinea.add(lexema);
+            }
         }
-        return "\nLa cadena NO es un numero en lenguaje C";
+        return nuevaLinea;
+    }
+
+    public static List<lexemaObj> getNumReal(List<lexemaObj> lexemas, int lineNumber){
+        List<lexemaObj> nuevaLinea = new ArrayList<>();
+        for(lexemaObj lexema: lexemas){
+            if(lexema.token == 0){
+                String cadena = lexema.valorCadena;
+                if (cadena.matches("-?\\d+\\.\\d+")) {
+                    int token = general.getCompLexicoValue("cReal");
+                    nuevaLinea.add(new lexemaObj(cadena, token, -1, lineNumber));
+                } else {
+                    nuevaLinea.add(lexema);
+                }
+            }else{
+                nuevaLinea.add(lexema);
+            }
+        }
+        return nuevaLinea;
+    }
+
+    public static List<lexemaObj> getValorLogico(List<lexemaObj> lexemas, int lineNumber){
+        List<lexemaObj> nuevaLinea = new ArrayList<>();
+        for(lexemaObj lexema: lexemas){
+            if(lexema.token == 0){
+                String cadena = lexema.valorCadena;
+                if (cadena.equals("true")) {
+                    int token = general.getCompLexicoValue("cTrue");
+                    nuevaLinea.add(new lexemaObj(cadena, token, -1, lineNumber));
+                }else if(cadena.equals("false")){
+                    int token = general.getCompLexicoValue("cFalse");
+                    nuevaLinea.add(new lexemaObj(cadena, token, -1, lineNumber));
+                } else {
+                    nuevaLinea.add(lexema);
+                }
+            }else{
+                nuevaLinea.add(lexema);
+            }
+        }
+        return nuevaLinea;
+    }
+
+    public static List<lexemaObj> getPalabrasReservadas(List<lexemaObj> lexemas, int lineNumber) {
+        List<lexemaObj> nuevaLinea = new ArrayList<>();
+        for (lexemaObj lexema : lexemas) {
+            if (lexema.token == 0) {
+                String cadena = lexema.valorCadena;
+                int token = 0;
+                
+                // Comparar la cadena con las palabras reservadas
+                List<String> palabrasReservadas = Arrays.asList("program", "begin", "end", "read", "write", "int", "real", "string", "bool", "if", "else", "then", "while", "do", "repeat", "until", "var");
+
+                for (String palabra : palabrasReservadas) {
+                    if (cadena.equals(palabra)) {
+                        token = general.getCompLexicoValue(palabra);
+                        break;
+                    }
+                }
+                
+                if (token != 0) {
+                    nuevaLinea.add(new lexemaObj(cadena, token, -1, lineNumber));
+                }else{
+                    nuevaLinea.add(lexema);
+                }
+            } else {
+                nuevaLinea.add(lexema);
+            }
+        }
+        return nuevaLinea;
     }
 }

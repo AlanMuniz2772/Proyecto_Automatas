@@ -47,6 +47,8 @@ public class opciones {
 			if (!bExists) {
 				JOptionPane.showMessageDialog(null, "Primero tienes que definir tu archivo de entrada");
 			} else {
+				listaDeResultados.clear();
+				
 				BufferedReader lector = new BufferedReader(new FileReader(archivoEntrada));
 				String linea;
 				List<lineaObj> nuevoCodigo = new ArrayList<>();
