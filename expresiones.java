@@ -5,35 +5,47 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
 //AQUI SOLO DEBE HABER LAS FUNCIONES PARA IDENTIFICAR LEXEMAS, MAXIMO UNA FUNCION POR COMPONENTE LEXICO 
 public class expresiones {
     // regresa un objeto lineaObj con los lexemas de la linea
     public static lineaObj getLineaObj(String linea, int lineNumber) {
-
-        List<lexemaObj> lexemas = getLineaCommentString(linea, lineNumber);
-        //AQUI ABAJO AGREGUEN SUS FUNCIONES, PUEDEN MOVERLAS A COMO SEA NECESARIO
-        lexemas = getCaracterEsp(lexemas, lineNumber);
-        lexemas = getOpAritmetico(lexemas, lineNumber);
-        lexemas = getOpRelacional(lexemas, lineNumber);
-        lexemas = getNumReal(lexemas, lineNumber);
-        lexemas = getNumEntero(lexemas, lineNumber);
-        lexemas = getOpLogico(lexemas, lineNumber);
-        lexemas = getIdentificadores(lexemas, lineNumber);
-        lexemas = getValorLogico(lexemas, lineNumber);
-        lexemas = getPalabrasReservadas(lexemas, lineNumber);
-        //AQUI ARRIBA AGREGUEN SUS FUNCIONES
-        lineaObj line = new lineaObj(lineNumber, lexemas);
-        return line;            
+        try {
+            List<lexemaObj> lexemas = getLineaCommentString(linea, lineNumber);
+            //AQUI ABAJO AGREGUEN SUS FUNCIONES, PUEDEN MOVERLAS A COMO SEA NECESARIO
+            lexemas = getCaracterEsp(lexemas, lineNumber);
+            lexemas = getOpAritmetico(lexemas, lineNumber);
+            lexemas = getOpRelacional(lexemas, lineNumber);
+            lexemas = getOpLogico(lexemas, lineNumber);
+            lexemas = getNumReal(lexemas, lineNumber);
+            lexemas = getNumEntero(lexemas, lineNumber);
+            lexemas = deletePuntos(lexemas, lineNumber);
+            lexemas = getIdentificadores(lexemas, lineNumber);
+            lexemas = getValorLogico(lexemas, lineNumber);
+            lexemas = getPalabrasReservadas(lexemas, lineNumber);
+            //AQUI ARRIBA AGREGUEN SUS FUNCIONES
+            lineaObj line = new lineaObj(lineNumber, lexemas);
+            return line;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error en la función lexica getLineaObj(): " + e.getMessage());
+            return null;
+        }
+        
     }
-
+    
+    //NO LE MUEVAN A ESTA FUNCION, CUANDO LA HICE SOLO DIOS Y YO SABIAMOS COMO FUNCIONA, AHORA  
+    //NO CREO QUE NI DIOS LO SEPA, SI MANDA ERROR REZEN PARA QUE NO SE ROMPA EL SISTEMA
     //regresa una lista de lexemas con los comentarios y strings identificados
     public static List<lexemaObj> getLineaCommentString(String linea, int lineNumber) {
+        try {
         List<lexemaObj> nuevaLinea = new ArrayList<>();
         String listaCadenas[] = linea.split(" ");
         for (int indexCadena = 0; indexCadena < listaCadenas.length; indexCadena++) {
             String cadena = listaCadenas[indexCadena];
             String strLexema;
             String nuevaCadena = "";
+            String contenido = "";
             boolean foundLexema = false;
             for (int indexCaracter = 0; indexCaracter < cadena.length(); indexCaracter++){
                 char caracter = cadena.charAt(indexCaracter);
@@ -43,9 +55,13 @@ public class expresiones {
                     strLexema = general.getString(cadenaTemp, listaTempCadenas);
                     if (strLexema != null) {
                         nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
-                        nuevaLinea.add(new lexemaObj(strLexema, general.getCompLexicoValue("cCadena"), -1, lineNumber));
-                        foundLexema = true;
-                        break;
+                        nuevaCadena = "";
+                        contenido = strLexema.substring(1, strLexema.length() - 1).trim();
+                        if (!contenido.isEmpty()) {
+                            nuevaLinea.add(new lexemaObj(strLexema, general.getCompLexicoValue("cCadena"), -1, lineNumber));
+                            foundLexema = true;
+                            break;
+                        }
                     }
                     nuevaCadena += caracter;
                 }
@@ -57,9 +73,13 @@ public class expresiones {
                     strLexema = general.getComment(cadenaTemp, listaTempCadenas);
                     if (strLexema != null) {
                         nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
-                        nuevaLinea.add(new lexemaObj(strLexema, general.getCompLexicoValue("comentarioLinea"), -1, lineNumber));
-                        foundLexema = true;
-                        break;
+                        nuevaCadena = "";
+                        contenido = strLexema.substring(2, strLexema.length() - 2).trim();
+                        if (!contenido.isEmpty()) {
+                            nuevaLinea.add(new lexemaObj(strLexema, -78, -1, lineNumber));
+                            foundLexema = true;
+                            break;
+                        }
                     }
                     nuevaCadena += caracter;
                 }
@@ -71,10 +91,10 @@ public class expresiones {
                 lexemaObj lexemaUltimo = nuevaLinea.get(nuevaLinea.size() - 1);
                 String spliter = "";
                 if (lexemaUltimo.token == -78) {
-                    spliter = "//";
-                    String[] lineaDividida = linea.split(spliter, 3);
-                    if(lineaDividida.length > 2){
-                        nuevaLinea.addAll(getLineaCommentString(lineaDividida[2], lineNumber));
+                    spliter = lexemaUltimo.valorCadena;
+                    String[] lineaDividida = linea.split(spliter, 2);
+                    if(lineaDividida.length >= 2){
+                        nuevaLinea.addAll(getLineaCommentString(lineaDividida[1], lineNumber));
                     }
                 }else{
                     spliter = lexemaUltimo.valorCadena;
@@ -89,14 +109,18 @@ public class expresiones {
             nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
         }
         nuevaLinea.removeIf(lexema -> lexema.valorCadena.isEmpty());
-
+        nuevaLinea.removeIf(lexema -> lexema.token == -78);
         
         return nuevaLinea;
-
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error en la función lexica getLineaCommentString(): " + e.getMessage());
+            return null;
+        }
     }
 
     //regresa una lista de lexemas con los caracteres especiales identificados
     public static List<lexemaObj> getCaracterEsp(List<lexemaObj> lexemas, int lineNumber){
+        try{
         List<lexemaObj> nuevaLinea = new ArrayList<>();
         for(lexemaObj lexema: lexemas){
             if(lexema.token == 0){//si el token del lexema es 0, hay que intentar identificarlo
@@ -140,10 +164,15 @@ public class expresiones {
             }
         }
         return nuevaLinea;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error en la función lexica getCaracterEsp(): " + e.getMessage());
+            return null;
+        }
     }
 
     //regresa una lista de lexemas con los identificadores identificados
     public static List<lexemaObj> getIdentificadores(List<lexemaObj> lexemas, int lineNumber){
+        try{
         List<lexemaObj> nuevaLinea = new ArrayList<>();
         String expresion_cadena = "^[a-zA-Z][a-zA-Z0-9_]*#$";
         String expresion_real = "^[a-zA-Z][a-zA-Z0-9_]*%$";
@@ -183,9 +212,14 @@ public class expresiones {
             }
         }
         return nuevaLinea;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error en la función lexica getIdentificadores(): " + e.getMessage());
+            return null;
+        }
     }
 
     public static List<lexemaObj> getOpAritmetico(List<lexemaObj> lexemas, int lineNumber){
+        try{
         List<lexemaObj> nuevaLinea = new ArrayList<>();
         for(lexemaObj lexema: lexemas){
             if(lexema.token == 0){
@@ -251,9 +285,14 @@ public class expresiones {
             }
         }
         return nuevaLinea;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error en la función lexica getOpAritmetico(): " + e.getMessage());
+            return null;
+        }
     }
 
     public static List<lexemaObj> getOpRelacional(List<lexemaObj> lexemas, int lineNumber){
+        try{
         List<lexemaObj> nuevaLinea = new ArrayList<>();
         for(lexemaObj lexema: lexemas){
             if(lexema.token == 0){
@@ -300,9 +339,14 @@ public class expresiones {
             }
         }
         return nuevaLinea;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error en la función lexica getOpRelacional(): " + e.getMessage());
+            return null;
+        }
     }
 
     public static List<lexemaObj> getOpLogico(List<lexemaObj> lexemas, int lineNumber){
+        try{
         List<lexemaObj> nuevaLinea = new ArrayList<>();
         for(lexemaObj lexema: lexemas){
             if(lexema.token == 0){
@@ -360,9 +404,14 @@ public class expresiones {
             }
         }
         return nuevaLinea;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error en la función lexica getOpLogico(): " + e.getMessage());
+            return null;
+        }
     }
 
     public static List<lexemaObj> getNumEntero(List<lexemaObj> lexemas, int lineNumber){
+        try{
         List<lexemaObj> nuevaLinea = new ArrayList<>();
         for(lexemaObj lexema: lexemas){
             if(lexema.token == 0){
@@ -378,9 +427,14 @@ public class expresiones {
             }
         }
         return nuevaLinea;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error en la función lexica getNumEntero(): " + e.getMessage());
+            return null;
+        }
     }
 
     public static List<lexemaObj> getNumReal(List<lexemaObj> lexemas, int lineNumber){
+        try{
         List<lexemaObj> nuevaLinea = new ArrayList<>();
         for(lexemaObj lexema: lexemas){
             if(lexema.token == 0){
@@ -396,9 +450,14 @@ public class expresiones {
             }
         }
         return nuevaLinea;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error en la función lexica getNumReal(): " + e.getMessage());
+            return null;
+        }
     }
 
     public static List<lexemaObj> getValorLogico(List<lexemaObj> lexemas, int lineNumber){
+        try{
         List<lexemaObj> nuevaLinea = new ArrayList<>();
         for(lexemaObj lexema: lexemas){
             if(lexema.token == 0){
@@ -417,9 +476,14 @@ public class expresiones {
             }
         }
         return nuevaLinea;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error en la función lexica getValorLogico(): " + e.getMessage());
+            return null;
+        }
     }
 
     public static List<lexemaObj> getPalabrasReservadas(List<lexemaObj> lexemas, int lineNumber) {
+        try{
         List<lexemaObj> nuevaLinea = new ArrayList<>();
         for (lexemaObj lexema : lexemas) {
             if (lexema.token == 0) {
@@ -446,5 +510,44 @@ public class expresiones {
             }
         }
         return nuevaLinea;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error en la función lexica getPalabrasReservadas(): " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static List<lexemaObj> deletePuntos(List<lexemaObj> lexemas, int lineNumber) {
+        try{
+        List<lexemaObj> nuevaLinea = new ArrayList<>();
+        for (lexemaObj lexema : lexemas) {
+            if (lexema.token == 0) {
+                String cadena = lexema.valorCadena;
+                String nuevaCadena = "";
+                for (int indexCaracter = 0; indexCaracter < cadena.length(); indexCaracter++) {
+                    char caracter = cadena.charAt(indexCaracter);
+                    if (caracter == '.') {
+                        
+                        if (!nuevaCadena.isEmpty()) {
+                            nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
+                        }
+                        
+                        nuevaCadena = "";
+                    } else {
+                        nuevaCadena += caracter;
+                    }
+                }
+                if(!nuevaCadena.isEmpty()){
+                    //volvemos a almacenar la cadena como lexema sin identificar
+                    nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
+                }
+            } else {
+                nuevaLinea.add(lexema);
+            }
+        }
+        return nuevaLinea;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error en la función lexica getPuntos(): " + e.getMessage());
+            return null;
+        }
     }
 }

@@ -3,7 +3,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,7 @@ public class opciones {
 	private static File archivoSalida;
 	public static ArrayList<String> listaDeResultados = new ArrayList<>();
 
-	public void mostrarResultados(ArrayList<String> lResultados) {
+	public static void mostrarResultados(ArrayList<String> lResultados) {
 		try {
 			if (lResultados.size() > 0) {
 				String sResultados = "";
@@ -34,10 +33,11 @@ public class opciones {
 		}
 	}
 
-	public void leerArchivo() {
+	public static void leerArchivo() {
 		try {
 			boolean bExists = false;
 			ArrayList<String> lResultaodsTemp = new ArrayList<>();
+			ArrayList<String> lErrores = new ArrayList<>();
 
 			if (archivoEntrada == null) {
 				bExists = setArchivoEntrada();
@@ -59,20 +59,36 @@ public class opciones {
 					nuevoCodigo.add(expresiones.getLineaObj(linea, numLinea));
 				}
 				lector.close();
+
 				//Agrega el resultado string a la lista de resultados temporal
 				for (lineaObj line : nuevoCodigo) {
-					lResultaodsTemp.add(line.toString());
+					List<lexemaObj> lexemas = line.lexemas;
+					for (lexemaObj lexema : lexemas) {
+						if (lexema.token == 0) {
+							lErrores.add(lexema.toString());
+						}else{
+							lResultaodsTemp.add(lexema.toString()+"\n");
+						}
+					}
 				}
+
+				if(lErrores.size() > 0) {
+					System.out.println("Errores encontrados: \n");
+					for (String error : lErrores) {
+						System.out.println(error);
+					}
+				}
+				
 				listaDeResultados.addAll(lResultaodsTemp);
 				mostrarResultados(lResultaodsTemp);
 				
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Error en la función leerArchivo: " + e.getMessage());
 		}
 	}
 
-	public void escribirEnArchivo() {
+	public static void escribirEnArchivo() {
 		try {
 			boolean bExists = false;
 			if (listaDeResultados.size() > 0) {
@@ -84,9 +100,13 @@ public class opciones {
 				if (!bExists) {
 					JOptionPane.showMessageDialog(null, "Primero tienes que definir tu archivo de salida");
 				} else {
+					// Eliminar el contenido del archivo de salida
+					FileWriter escritor = new FileWriter(archivoSalida);
+					escritor.write(""); // Escribir una cadena vacía para eliminar el contenido
+					escritor.close();
 					// Crear un objeto FileWriter que permite escribir en el archivo
-					FileWriter escritor = new FileWriter(archivoSalida, true); // El segundo parámetro "true" indica agregar al final
-
+					escritor = new FileWriter(archivoSalida, true); // El segundo parámetro "true" indica agregar al final
+					
 					// Crear un objeto BufferedWriter para escribir texto de manera eficiente
 					BufferedWriter bufferEscritura = new BufferedWriter(escritor);
 					
@@ -103,14 +123,14 @@ public class opciones {
 			} else {
 				JOptionPane.showMessageDialog(null, "No hay resultados para guardar");
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Error en la función escribirEnArchivo: " + e.getMessage());
 		}
 	}
 
 
 	//Define el archivo de texto que sera de lectura
-    public boolean setArchivoEntrada() {
+    public static boolean setArchivoEntrada() {
     	try {
     		String sPath = JOptionPane.showInputDialog("Ingrese direccion de archivo de entrada: ");
     		
@@ -131,7 +151,7 @@ public class opciones {
     			JOptionPane.showMessageDialog(null, "La direccion no es valida");
     		}
             return false;
-        } catch (IOException e) {
+        } catch (Exception e) {
             // Manejo de excepciones en caso de error de escritura
             JOptionPane.showMessageDialog(null, "Error en la función setArchivoEntrada: " + e.getMessage());
             return false;
@@ -139,7 +159,7 @@ public class opciones {
     }
     
     //Define el archivo de texto que sera de escritura para los resultados obtenidos
-    public boolean setArchivoSalida() {
+    public static boolean setArchivoSalida() {
     	try {
     		String sPath = JOptionPane.showInputDialog("Ingrese direccion de archivo de salida(o cree uno): ");
     		
@@ -160,7 +180,7 @@ public class opciones {
     			JOptionPane.showMessageDialog(null, "La direccion no es valida");
     		}
             return false;
-        } catch (IOException e) {
+        } catch (Exception e) {
             // Manejo de excepciones en caso de error de escritura
             JOptionPane.showMessageDialog(null, "Error en la función setArchivoSalida: " + e.getMessage());
             return false;
@@ -169,16 +189,26 @@ public class opciones {
 
 	//Ingreso de una sola linea
 	public static void ingresoUnico () {
-		String linea = JOptionPane.showInputDialog("Ingrese linea: ");
-		lineaObj line = expresiones.getLineaObj(linea, 1);
-		listaDeResultados.add(line.toString());
-		JOptionPane.showMessageDialog(null, line.toString());
+		try {
+			String linea = JOptionPane.showInputDialog("Ingrese linea: ");
+			lineaObj line = expresiones.getLineaObj(linea, 1);
+			listaDeResultados.add(line.toString());
+			JOptionPane.showMessageDialog(null, line.toString());
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Error en la función ingresoUnico: " + e.getMessage());
+		}
+		
 	}
 
 	//Limpia la lista de resultados
-	public void limpiarResultados() {
-		listaDeResultados.clear();
-		JOptionPane.showMessageDialog(null, "Lista de resultados limpiada");
+	public static void limpiarResultados() {
+		try {
+			listaDeResultados.clear();
+			JOptionPane.showMessageDialog(null, "Lista de resultados limpiada");
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Error en la función limpiarResultados: " + e.getMessage());
+		}
+		
 	}
 }
 

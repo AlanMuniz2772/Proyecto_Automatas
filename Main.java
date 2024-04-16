@@ -1,69 +1,72 @@
 import javax.swing.JOptionPane;
 
 public class Main {
-
+    
     public static opciones archivo = new opciones();
 
     // AQUI SOLO SE DEBE TENER LA ESTRUCTURA DEL MENU DE LA APLIACION
     public static void main(String[] args) {
+        try{
+            String menu = "1. Ingresar cadena" + //
+                    "\n2. Leer archivo de entrada" + // lee el archivo de entrada con las cadenas a procesar
+                    "\n3. Mostrar resultados en memoria" +
+                    "\n4. Limpiar resultados en memoria" +
+                    "\n5. Guardar resultados en archivo de salida" + // Unica manera de guardar resultados en archivo de salida
+                    "\n6. Definir direccion de archivo entrada" +
+                    "\n7. Definir direccion de archivo salida";
 
-        String menu = "1. Ingresar cadena" + //
-                "\n2. Leer archivo de entrada" + // lee el archivo de entrada con las cadenas a procesar
-                "\n3. Mostrar resultados en memoria" +
-                "\n4. Limpiar resultados en memoria" +
-                "\n5. Guardar resultados en archivo de salida" + // Unica manera de guardar resultados en archivo de salida
-                "\n6. Definir direccion de archivo entrada" +
-                "\n7. Definir direccion de archivo salida";
-
-            char opcion;
-            
-            String input;
-  
-            do {
-                input = JOptionPane.showInputDialog(null, menu);
-
-                // Si el usuario hace clic en "Cancelar" o cierra la ventana, salimos del
-                // programa
-                if (input == null) {
-                    System.exit(0);
-                }
+                char opcion;
                 
-                opcion = input.charAt(0);
-                
-            switch (opcion) {
-                case '1':
-                    opciones.ingresoUnico();
-                    break;
+                String input;
+    
+                do {
+                    input = JOptionPane.showInputDialog(null, menu);
+
+                    // Si el usuario hace clic en "Cancelar" o cierra la ventana, salimos del
+                    // programa
+                    if (input == null) {
+                        System.exit(0);
+                    }
                     
-                case '2':
-                    archivo.leerArchivo();
-                    break;
+                    opcion = input.charAt(0);
+                    
+                switch (opcion) {
+                    case '1':
+                        opciones.ingresoUnico();
+                        break;
+                        
+                    case '2':
+                        opciones.leerArchivo();
+                        break;
 
-                case '3':
-                    archivo.mostrarResultados(opciones.listaDeResultados);
-                    break;
+                    case '3':
+                        opciones.mostrarResultados(opciones.listaDeResultados);
+                        break;
 
-                case '4':
-                    archivo.limpiarResultados();
-                    break;
+                    case '4':
+                        opciones.limpiarResultados();
+                        break;
 
-                case '5':
-                    archivo.escribirEnArchivo();
-                    break;
+                    case '5':
+                        opciones.escribirEnArchivo();
+                        break;
 
-                case '6':
-                    archivo.setArchivoEntrada();
-                    break;
+                    case '6':
+                        opciones.setArchivoEntrada();
+                        break;
 
-                case '7':
-                    archivo.setArchivoSalida();
-                    break;
-                
-                default:
-                    JOptionPane.showMessageDialog(null, "Opcion no valida");
-                    break;
-            }
-        } while (input != null);
+                    case '7':
+                        opciones.setArchivoSalida();
+                        break;
+                    
+                    default:
+                        JOptionPane.showMessageDialog(null, "Opcion no valida");
+                        break;
+                }
+            } while (input != null);
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, "Error en la funcion main: " + e.getMessage());
+        }
     }
 }
 
