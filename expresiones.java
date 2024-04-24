@@ -19,8 +19,8 @@ public class expresiones {
             lexemas = getOpRelacional(lexemas, lineNumber);
             lexemas = getOpLogico(lexemas, lineNumber);
             lexemas = getNumReal(lexemas, lineNumber);
-            lexemas = getNumEntero(lexemas, lineNumber);
             lexemas = deletePuntos(lexemas, lineNumber);
+            lexemas = getNumEntero(lexemas, lineNumber);
             lexemas = getIdentificadores(lexemas, lineNumber);
             lexemas = getValorLogico(lexemas, lineNumber);
             lexemas = getPalabrasReservadas(lexemas, lineNumber);
@@ -34,8 +34,7 @@ public class expresiones {
         
     }
     
-    //NO LE MUEVAN A ESTA FUNCION, CUANDO LA HICE SOLO DIOS Y YO SABIAMOS COMO FUNCIONA, AHORA  
-    //NO CREO QUE NI DIOS LO SEPA, SI MANDA ERROR REZEN PARA QUE NO SE ROMPA EL SISTEMA
+    
     //regresa una lista de lexemas con los comentarios y strings identificados
     public static List<lexemaObj> getLineaCommentString(String linea, int lineNumber) {
         try {
@@ -357,6 +356,10 @@ public class expresiones {
                     if(caracter == '&' && indexCaracter + 1 < cadena.length() && cadena.charAt(indexCaracter + 1) == '&'){
                         if(nuevaCadena.matches("^[a-zA-Z][a-zA-Z0-9_]*")){
                             nuevaCadena += caracter;
+                            if(!nuevaCadena.isEmpty()){
+                                nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
+                            }
+                            nuevaCadena = "";
                         }else{
                             if(!nuevaCadena.isEmpty()){
                                 nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
