@@ -1,5 +1,5 @@
 import javax.swing.JOptionPane;
-
+//esto es un comentario de prueba con git
 public class Main {
     
     public static opciones archivo = new opciones();
