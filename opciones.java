@@ -1,7 +1,5 @@
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,16 +15,16 @@ public class opciones {
 	private static File archivoSalida;
 	public static ArrayList<String> listaDeResultados = new ArrayList<>();
 
-	public static void mostrarResultados(ArrayList<String> lResultados) {
+	public static void mostrarResultados(ArrayList<String> lResultados, String sTitulo) {
 		try {
 			if (lResultados.size() > 0) {
 				String sResultados = "";
 				for (String result : lResultados) {
 					sResultados += result;
 				}
-				JOptionPane.showMessageDialog(null, sResultados, "Resultados", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, sResultados, sTitulo, JOptionPane.INFORMATION_MESSAGE);
 			} else {
-				JOptionPane.showMessageDialog(null, "Lista de resultados vacia", "Resultados", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Lista vacia", sTitulo, JOptionPane.INFORMATION_MESSAGE);
 			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Error en la función mostrarResultados: " + e.getMessage());
@@ -36,8 +34,8 @@ public class opciones {
 	public static void leerArchivo() {
 		try {
 			boolean bExists = false;
-			ArrayList<String> lResultaodsTemp = new ArrayList<>();
-			ArrayList<String> lErrores = new ArrayList<>();
+			boolean bSintactico = false;
+			List<lineaObj> lLineas = null;
 
 			if (archivoEntrada == null) {
 				bExists = setArchivoEntrada();
@@ -48,40 +46,23 @@ public class opciones {
 				JOptionPane.showMessageDialog(null, "Primero tienes que definir tu archivo de entrada");
 			} else {
 				listaDeResultados.clear();
+			
+				lLineas = expresiones.getLexico(archivoEntrada);
 				
-				BufferedReader lector = new BufferedReader(new FileReader(archivoEntrada));
-				String linea;
-				List<lineaObj> nuevoCodigo = new ArrayList<>();
-				int numLinea = 0;
-				// Leer cada línea del archivo y agregar la lineaObj a la lista
-				while ((linea = lector.readLine()) != null) {
-					numLinea++;
-					nuevoCodigo.add(expresiones.getLineaObj(linea, numLinea));
-				}
-				lector.close();
+				if(lLineas != null){
+					List<lexemaObj> listaTokens = new ArrayList<>();
 
-				//Agrega el resultado string a la lista de resultados temporal
-				for (lineaObj line : nuevoCodigo) {
-					List<lexemaObj> lexemas = line.lexemas;
-					for (lexemaObj lexema : lexemas) {
-						if (lexema.token == 0) {
-							lErrores.add(lexema.toString());
-						}else{
-							lResultaodsTemp.add(lexema.toString()+"\n");
-						}
+					for (lineaObj linea : lLineas) {
+						listaDeResultados.add(linea.toString());
+						listaTokens.addAll(linea.lexemas);
 					}
+
+					bSintactico = sintactico.isSintactico(listaTokens);
 				}
 
-				if(lErrores.size() > 0) {
-					System.out.println("Errores encontrados: \n");
-					for (String error : lErrores) {
-						System.out.println(error);
-					}
+				if(bSintactico){
+					JOptionPane.showMessageDialog(null, "El archivo es sintacticamente correcto");
 				}
-				
-				listaDeResultados.addAll(lResultaodsTemp);
-				mostrarResultados(lResultaodsTemp);
-				
 			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Error en la función leerArchivo: " + e.getMessage());

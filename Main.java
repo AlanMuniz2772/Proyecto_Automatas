@@ -40,7 +40,7 @@ public class Main {
                         break;
 
                     case '3':
-                        opciones.mostrarResultados(opciones.listaDeResultados);
+                        opciones.mostrarResultados(opciones.listaDeResultados, "Resultados lexicos");
                         break;
 
                     case '4':

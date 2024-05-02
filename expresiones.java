@@ -1,4 +1,7 @@
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +12,43 @@ import javax.swing.JOptionPane;
 
 //AQUI SOLO DEBE HABER LAS FUNCIONES PARA IDENTIFICAR LEXEMAS, MAXIMO UNA FUNCION POR COMPONENTE LEXICO 
 public class expresiones {
+    public static List<lineaObj> getLexico(File archivoEntrada){
+        try {
+            ArrayList<String> lErrores = new ArrayList<>();
+            BufferedReader lector = new BufferedReader(new FileReader(archivoEntrada));
+            String linea;
+            List<lineaObj> nuevoCodigo = new ArrayList<>();
+            int numLinea = 0;
+
+            // Leer cada línea del archivo y agregar la lineaObj a la lista
+            while ((linea = lector.readLine()) != null) {
+                numLinea++;
+                nuevoCodigo.add(getLineaObj(linea, numLinea));
+            }
+            lector.close();
+
+            //Agrega el resultado string a la lista de resultados temporal
+            for (lineaObj line : nuevoCodigo) {
+                List<lexemaObj> lexemas = line.lexemas;
+                for (lexemaObj lexema : lexemas) {
+                    if (lexema.token == 0) {
+                        lErrores.add(lexema.toString()+"\n");
+                    }
+                }
+            }
+
+            if(lErrores.size() > 0) {
+                opciones.mostrarResultados(lErrores, "Errores encontrados");
+                return null;
+            }else{
+                return nuevoCodigo;
+            }
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error en la función lexica getLexico(): " + e.getMessage());
+            return null;
+        }
+    }
+
     // regresa un objeto lineaObj con los lexemas de la linea
     public static lineaObj getLineaObj(String linea, int lineNumber) {
         try {
