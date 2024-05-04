@@ -38,7 +38,7 @@ public class expresiones {
             }
 
             if(lErrores.size() > 0) {
-                opciones.mostrarResultados(lErrores, "Errores encontrados");
+                opciones.mostrarResultados(lErrores, "Errores lexicos encontrados: ");
                 return null;
             }else{
                 return nuevoCodigo;
