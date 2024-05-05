@@ -178,6 +178,9 @@ public class sintactico {
                 mostrarErrorSintactico(listaTokens.get(index).numLinea, "Se esperaba otro identificador o constante después del primero");
                 return 0;
             }
+        } else if (token == -54 || token == -64 || token == -65) {
+            // Si el token es un identificador logico o una constante True o False
+            return index + 1;
         } else {
             // Mostrar mensaje de error si el primer token no es un identificador o constante esperada
             mostrarErrorSintactico(listaTokens.get(index).numLinea, "Se esperaba uno de los identificadores o constantes permitidos");
