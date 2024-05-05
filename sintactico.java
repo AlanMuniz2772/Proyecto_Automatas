@@ -137,7 +137,19 @@ public class sintactico {
     //FUNCIONES EN BASE A DIAGRAMAS
         //Virgilio
         public static int getExpresion(List<lexemaObj> listaTokens, int index){
-            return index;
+            int token = listaTokens.get(index).token;
+
+            // Verificar si el token en el índice es uno de los operadores especificados
+            if (token == -21 || token == -22 || token == -24 || token == -25 || 
+                token == -26 || token == -31 || token == -32 || token == -33 || 
+                token == -34 || token == -35 || token == -36 || token == -41 || 
+                token == -42 || token == -43) {
+                return index + 1; // Avanzar al siguiente token
+            } else {
+                // Mostrar mensaje de error si el token no es uno de los operadores esperados
+                mostrarErrorSintactico(listaTokens.get(index).numLinea, "Se esperaba uno de los operadores permitidos");
+                return 0;
+            }
         }
 
         public static int getRepeat(List<lexemaObj> listaTokens, int index){
