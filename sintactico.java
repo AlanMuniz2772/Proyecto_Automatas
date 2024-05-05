@@ -153,15 +153,34 @@ public class sintactico {
     public static int getExpresion(List<lexemaObj> listaTokens, int index) {
         int token = listaTokens.get(index).token;
 
-        // Verificar si el token en el índice es uno de los operadores especificados
-        if (token == -21 || token == -22 || token == -24 || token == -25 ||
-                token == -26 || token == -31 || token == -32 || token == -33 ||
-                token == -34 || token == -35 || token == -36 || token == -41 ||
-                token == -42 || token == -43) {
-            return index + 1; // Avanzar al siguiente token
+        // Verificar si el primer token es uno de los identificadores especificados
+        if (token == -51 || token == -52 || token == -53 || token == -54 || token == -55 ||
+            token == -61 || token == -62) {
+            
+            // Avanzar al siguiente token
+            index++;
+    
+            // Verificar si el siguiente token también es un identificador o una constante
+            if (index < listaTokens.size()) {
+                token = listaTokens.get(index).token;
+                if (token == -51 || token == -52 || token == -53 || token == -54 || token == -55 ||
+                    token == -61 || token == -62) {
+                    
+                    // Llamar recursivamente a getExpresion para procesar el siguiente identificador o constante
+                    return getExpresion(listaTokens, index);
+                } else {
+                    // Mostrar mensaje de error si el siguiente token no es un identificador o constante
+                    mostrarErrorSintactico(listaTokens.get(index).numLinea, "Se esperaba otro identificador o constante después del primero");
+                    return 0;
+                }
+            } else {
+                // Mostrar mensaje de error si no hay un siguiente token
+                mostrarErrorSintactico(listaTokens.get(index).numLinea, "Se esperaba otro identificador o constante después del primero");
+                return 0;
+            }
         } else {
-            // Mostrar mensaje de error si el token no es uno de los operadores esperados
-            mostrarErrorSintactico(listaTokens.get(index).numLinea, "Se esperaba uno de los operadores permitidos");
+            // Mostrar mensaje de error si el primer token no es un identificador o constante esperada
+            mostrarErrorSintactico(listaTokens.get(index).numLinea, "Se esperaba uno de los identificadores o constantes permitidos");
             return 0;
         }
     }
