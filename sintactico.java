@@ -10,9 +10,9 @@ public class sintactico {
             Arrays.asList(-11, -12, -13, -14));// tokens de palabras reservadas
     public static ArrayList<Integer> tokensIdentificadores = new ArrayList<Integer>(
             Arrays.asList(-51, -52, -53, -54, -55));// tokens de identificadores
-    public static ArrayList<Integer> tokensConstantes = new ArrayList<Integer>(Arrays.asList(-61, -62, -63, -64, -65));// tokens
-                                                                                                                       // de
-                                                                                                                       // constantes
+    public static ArrayList<Integer> tokensConstantes = new ArrayList<Integer>(Arrays.asList(-61, -62, -63, -64, -65));// tokens de constantes
+    public static ArrayList<Integer> tokensOperadores = new ArrayList<Integer>(
+            Arrays.asList(-21, -22, -24, -25, -26, -31, -32, -33, -34, -35, -36, -41, -42, -43));// tokens de operadores                                                                                                                      
 
     // FUNCION PRINCIPAL
     // La lista de tokens principal se dividira en 3, encabezado, declaracion y
@@ -150,42 +150,29 @@ public class sintactico {
 
     // FUNCIONES EN BASE A DIAGRAMAS
     // Virgilio
+    // Regresa el indice en la lista de tokens donde termina la expresion, si es
     public static int getExpresion(List<lexemaObj> listaTokens, int index) {
-        int token = listaTokens.get(index).token;
-
-        // Verificar si el primer token es uno de los identificadores especificados
-        if (token == -51 || token == -52 || token == -53 || token == -54 || token == -55 ||
-            token == -61 || token == -62) {
-            
-            // Avanzar al siguiente token
-            index++;
-    
-            // Verificar si el siguiente token también es un identificador o una constante
-            if (index < listaTokens.size()) {
-                token = listaTokens.get(index).token;
-                if (token == -51 || token == -52 || token == -53 || token == -54 || token == -55 ||
-                    token == -61 || token == -62) {
-                    
-                    // Llamar recursivamente a getExpresion para procesar el siguiente identificador o constante
-                    return getExpresion(listaTokens, index);
-                } else {
-                    // Mostrar mensaje de error si el siguiente token no es un identificador o constante
-                    mostrarErrorSintactico(listaTokens.get(index).numLinea, "Se esperaba otro identificador o constante después del primero");
-                    return 0;
-                }
-            } else {
-                // Mostrar mensaje de error si no hay un siguiente token
-                mostrarErrorSintactico(listaTokens.get(index).numLinea, "Se esperaba otro identificador o constante después del primero");
+        if(tokensIdentificadores.contains(listaTokens.get(index).token) || tokensConstantes.contains(listaTokens.get(index).token)) {// identificador o constante
+            if(tokensOperadores.contains(listaTokens.get(index+1).token)) {// operador
+                return getExpresion(listaTokens, index + 2);// Se busca la siguiente expresion
+            }
+            return index;// si no hay operador se termina la expresion
+        }else if(listaTokens.get(index).token == -73){//(
+            index = getExpresion(listaTokens, index + 1);// Se busca la siguiente expresion
+            if(index == 0){
                 return 0;
             }
-        } else if (token == -54 || token == -64 || token == -65) {
-            // Si el token es un identificador logico o una constante True o False
-            return index + 1;
-        } else {
-            // Mostrar mensaje de error si el primer token no es un identificador o constante esperada
-            mostrarErrorSintactico(listaTokens.get(index).numLinea, "Se esperaba uno de los identificadores o constantes permitidos");
+            if(listaTokens.get(index + 1).token == -74){//)
+                if(tokensOperadores.contains(listaTokens.get(index+2).token)){// operador
+                    return getExpresion(listaTokens, index + 3);// Se busca la siguiente expresion
+                }
+                return index+1;// si no hay operador se termina la expresion
+            }
+            mostrarErrorSintactico(listaTokens.get(index + 1).numLinea, "Se esperaba ')'");
             return 0;
         }
+        mostrarErrorSintactico(listaTokens.get(index).numLinea, "Se esperaba identificador, constante o '('");
+        return 0;
     }
 
     public static int getRepeat(List<lexemaObj> listaTokens, int index) {
@@ -281,7 +268,7 @@ public class sintactico {
             if (listaTokens.get(index + 1).token == -75) {// ;
                 return index + 1;
             }
-            mostrarErrorSintactico(index, "Se esperaba ';'");
+            mostrarErrorSintactico(listaTokens.get(index).numLinea, "Se esperaba ';'");
             return 0;
 
         }
