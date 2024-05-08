@@ -79,8 +79,10 @@ public class sintactico {
                         return 3;
                     }
                     mostrarErrorSintactico(listaTokens.get(2).numLinea, "Se esperaba ;");
+                    return 0;
                 }
                 mostrarErrorSintactico(listaTokens.get(1).numLinea, "Se esperaba identificador de programa");
+                return 0;
             }
             mostrarErrorSintactico(listaTokens.get(0).numLinea, "Se esperaba palabra reservada program");
             return 0;
@@ -135,10 +137,12 @@ public class sintactico {
         
     }
 
+    // Regresa el indice en la lista de tokens donde termina el bloque, si es
+    // incorrecta la estrucutura o hay error regresa 0
     public static int isBloque(List<lexemaObj> listaTokens, int i) {
         try {
             if (listaTokens.get(i).token == -2) {// begin
-
+                
                 for (int index = i + 1; index < listaTokens.size(); index++) {
                     if (listaTokens.get(index).token == -3) {// end
                         return index;
@@ -181,41 +185,11 @@ public class sintactico {
     }
 
     // FUNCIONES EN BASE A DIAGRAMAS
-    // Virgilio
-    // Regresa el indice en la lista de tokens donde termina la expresion, si es
-    public static int getExpresion(List<lexemaObj> listaTokens, int index) {
-        try {
-            if(tokensIdentificadores.contains(listaTokens.get(index).token) || tokensConstantes.contains(listaTokens.get(index).token)) {// identificador o constante
-                if(tokensOperadores.contains(listaTokens.get(index+1).token)) {// operador
-                    return getExpresion(listaTokens, index + 2);// Se busca la siguiente expresion
-                }
-                return index;// si no hay operador se termina la expresion
-            }else if(listaTokens.get(index).token == -73){//(
-                index = getExpresion(listaTokens, index + 1);// Se busca la siguiente expresion
-                if(index == 0){
-                    return 0;
-                }
-                if(listaTokens.get(index + 1).token == -74){//)
-                    if(tokensOperadores.contains(listaTokens.get(index+2).token)){// operador
-                        return getExpresion(listaTokens, index + 3);// Se busca la siguiente expresion
-                    }
-                    return index+1;// si no hay operador se termina la expresion
-                }
-                mostrarErrorSintactico(listaTokens.get(index + 1).numLinea, "Se esperaba ')'");
-                return 0;
-            }
-            mostrarErrorSintactico(listaTokens.get(index).numLinea, "Se esperaba identificador, constante o '('");
-            return 0;
-        }catch(IndexOutOfBoundsException e){
-            mostrarErrorSintactico("Faltan componentes en expresion general");
-            return 0;
-        }
-        catch (Exception e) {
-            mostrarErrorSintactico("Error en la función getExpresion(): " + e.getMessage());
-            return 0;
-        }
-    }
 
+    // VIRGILIO
+
+    // Regresa el indice en la lista de tokens donde termina la estructura repeat, si
+    // es incorrecta la estrucutura o hay error regresa 0
     public static int getRepeat(List<lexemaObj> listaTokens, int index) {
         try {
             index = isBloque(listaTokens, index);
@@ -253,7 +227,35 @@ public class sintactico {
         }
     }
 
-    // Jhoana
+    // Regresa el indice en la lista de tokens donde terminan las variables declaradas para un tipo de dato
+    // en la seccion de encabezado, si es incorrecta la estrucutura o hay error regresa 0
+    public static int getIndexVariablesDeclaradas(List<lexemaObj> listaTokens, int index) {
+        try {
+            if (tokensIdentificadores.contains(listaTokens.get(index).token)) {// identificador de variable
+                if (listaTokens.get(index + 1).token == -75) {// ;
+                    return index + 1;
+                } else if (listaTokens.get(index + 1).token == -76) {// ,
+                    return getIndexVariablesDeclaradas(listaTokens, index + 2);// Se busca el siguiente identificador de
+                                                                               // variable
+                } else {
+                    mostrarErrorSintactico(listaTokens.get(index).numLinea, "se esperaba ; o ,");
+                    return 0;
+                }
+            }
+            mostrarErrorSintactico(listaTokens.get(index).numLinea, "se esperaba identificador de variable");
+            return 0;
+        }catch(IndexOutOfBoundsException e){
+            mostrarErrorSintactico("Faltan componentes en declaracion de variables");
+            return 0;
+        }catch (Exception e) {
+            mostrarErrorSintactico("Error en la función getIndexVariablesDeclaradas(): " + e.getMessage());
+            return 0;
+        }
+    }
+
+    // JHOANA
+    // Regresa el indice en la lista de tokens donde termina la estructura if, si es
+    // incorrecta la estrucutura o hay error regresa 0
     public static int getIf(List<lexemaObj> listaTokens, int index) {
         try {
             if (listaTokens.get(index).token == -73) {// (
@@ -292,7 +294,8 @@ public class sintactico {
         }
     }
 
-    // Alan
+    // Regresa el indice en la lista de tokens donde termina la estructura while, si es
+    // incorrecta la estrucutura o hay error regresa 0
     public static int getWhile(List<lexemaObj> listaTokens, int index) {
         try {
             if (listaTokens.get(index).token == -73) {// (
@@ -324,6 +327,8 @@ public class sintactico {
         }
     }
 
+    // Regresa el indice en la lista de tokens donde termina la asignacion, si es
+    // incorrecta la estrucutura o hay error regresa 0
     public static int getAsignacion(List<lexemaObj> listaTokens, int index) {
         try {
             if (listaTokens.get(index).token == -26) {// :=
@@ -349,6 +354,45 @@ public class sintactico {
         }
     }
 
+    // ALAN
+
+    // Regresa el indice en la lista de tokens donde termina la expresion, si es
+    // incorrecta la estrucutura o hay error regresa 0
+    public static int getExpresion(List<lexemaObj> listaTokens, int index) {
+        try {
+            if(tokensIdentificadores.contains(listaTokens.get(index).token) || tokensConstantes.contains(listaTokens.get(index).token)) {// identificador o constante
+                if(tokensOperadores.contains(listaTokens.get(index+1).token)) {// operador
+                    return getExpresion(listaTokens, index + 2);// Se busca la siguiente expresion
+                }
+                return index;// si no hay operador se termina la expresion
+            }else if(listaTokens.get(index).token == -73){//(
+                index = getExpresion(listaTokens, index + 1);// Se busca la siguiente expresion
+                if(index == 0){
+                    return 0;
+                }
+                if(listaTokens.get(index + 1).token == -74){//)
+                    if(tokensOperadores.contains(listaTokens.get(index+2).token)){// operador
+                        return getExpresion(listaTokens, index + 3);// Se busca la siguiente expresion
+                    }
+                    return index+1;// si no hay operador se termina la expresion
+                }
+                mostrarErrorSintactico(listaTokens.get(index + 1).numLinea, "Se esperaba ')'");
+                return 0;
+            }
+            mostrarErrorSintactico(listaTokens.get(index).numLinea, "Se esperaba identificador, constante o '('");
+            return 0;
+        }catch(IndexOutOfBoundsException e){
+            mostrarErrorSintactico("Faltan componentes en expresion general");
+            return 0;
+        }
+        catch (Exception e) {
+            mostrarErrorSintactico("Error en la función getExpresion(): " + e.getMessage());
+            return 0;
+        }
+    }
+
+    // Regresa el indice en la lista de tokens donde termina la estructura read o
+    // write, si es incorrecta la estrucutura o hay error regresa 0
     public static int getReadOrWrite(List<lexemaObj> listaTokens, int index) {
         try {
             if (listaTokens.get(index).token == -73) {// (
@@ -374,30 +418,6 @@ public class sintactico {
             return 0;
         }catch (Exception e) {
             mostrarErrorSintactico("Error en la función getReadOrWrite(): " + e.getMessage());
-            return 0;
-        }
-    }
-
-    public static int getIndexVariablesDeclaradas(List<lexemaObj> listaTokens, int index) {
-        try {
-            if (tokensIdentificadores.contains(listaTokens.get(index).token)) {// identificador de variable
-                if (listaTokens.get(index + 1).token == -75) {// ;
-                    return index + 1;
-                } else if (listaTokens.get(index + 1).token == -76) {// ,
-                    return getIndexVariablesDeclaradas(listaTokens, index + 2);// Se busca el siguiente identificador de
-                                                                               // variable
-                } else {
-                    mostrarErrorSintactico(listaTokens.get(index).numLinea, "se esperaba ; o ,");
-                    return 0;
-                }
-            }
-            mostrarErrorSintactico(listaTokens.get(index).numLinea, "se esperaba identificador de variable");
-            return 0;
-        }catch(IndexOutOfBoundsException e){
-            mostrarErrorSintactico("Faltan componentes en declaracion de variables");
-            return 0;
-        }catch (Exception e) {
-            mostrarErrorSintactico("Error en la función getIndexVariablesDeclaradas(): " + e.getMessage());
             return 0;
         }
     }
