@@ -20,33 +20,18 @@ public class sintactico {
     // estructura es correcta
     public static boolean isSintactico(List<lexemaObj> listaTokens) {
         try{
-            int numLexema = 0;
-            List<lexemaObj> encabezado = new ArrayList<>();
-            List<lexemaObj> declaracion = new ArrayList<>();
-            List<lexemaObj> cuerpo = new ArrayList<>();
+            int index = 0;
+            
+            index = isEncabezado(listaTokens);// Regresa el indice en la lista de tokens donde termina el encabezado
 
-            numLexema = isEncabezado(listaTokens);// Regresa el indice en la lista de tokens donde termina el encabezado
-            if (numLexema != 0) {// debe ser diferente de 0, si no es asi significa que hubo un error o que no
-                                // existe la seccion
-                encabezado = listaTokens.subList(0, numLexema);// Se guarda el encabezado de inicio a fin de este
-                listaTokens = listaTokens.subList(numLexema, listaTokens.size());// Se elimina el encabezado de la lista de
-                                                                                // tokens
+            if (index != 0) {// Si el encabezado existe podemos continuar buscando la declaracion de
+                index = isDeclaracion(listaTokens, index);// Se usa la nueva lista de tokens actualizada
             }
 
-            if (encabezado.size() != 0) {// Si el encabezado existe podemos continuar buscando la declaracion de
-                                        // variables
-                numLexema = isDeclaracion(listaTokens);// Se usa la nueva lista de tokens actualizada
-                if (numLexema != 0) {
-                    declaracion = listaTokens.subList(0, numLexema);
-                    listaTokens = listaTokens.subList(numLexema, listaTokens.size());
-                }
-            }
-
-            if (declaracion.size() != 0) {
-                numLexema = isBloque(listaTokens, 0);
-                if (numLexema != 0) {
-                    cuerpo = listaTokens.subList(0, numLexema + 1);
-                    listaTokens = listaTokens.subList(numLexema + 1, listaTokens.size());
+            if (index != 0) {
+                index = isBloque(listaTokens, index);
+                if (index != 0) {
+                    listaTokens = listaTokens.subList(index + 1, listaTokens.size());
                     if (listaTokens.size() != 0) {
                         mostrarErrorSintactico(listaTokens.get(0).numLinea, "Se esperaba fin de archivo");
                         return false;
@@ -56,7 +41,7 @@ public class sintactico {
 
             // Si las 3 secciones fueron encontradas sus tamaños deben ser diferente de 0 y
             // la estructura es correcta
-            if (encabezado.size() != 0 && declaracion.size() != 0 && cuerpo.size() != 0) {
+            if (index != 0) {
                 return true;
             }
 
@@ -73,18 +58,19 @@ public class sintactico {
     // Regresa el indice en la lista de tokens donde termina el encabezado
     public static int isEncabezado(List<lexemaObj> listaTokens) {
         try {
+            int numLinea = listaTokens.get(0).numLinea;
             if (listaTokens.get(0).token == -1) { // Program
                 if (listaTokens.get(1).token == -55) { // Identificador general termina en ?
                     if (listaTokens.get(2).token == -75) { // ;
                         return 3;
                     }
-                    mostrarErrorSintactico(listaTokens.get(2).numLinea, "Se esperaba ;");
+                    mostrarErrorSintactico(numLinea, "Se esperaba ;");
                     return 0;
                 }
-                mostrarErrorSintactico(listaTokens.get(1).numLinea, "Se esperaba identificador de programa");
+                mostrarErrorSintactico(numLinea, "Se esperaba identificador de programa");
                 return 0;
             }
-            mostrarErrorSintactico(listaTokens.get(0).numLinea, "Se esperaba palabra reservada program");
+            mostrarErrorSintactico(numLinea, "Se esperaba palabra reservada program");
             return 0;
         } catch (IndexOutOfBoundsException e) {
             mostrarErrorSintactico("Faltan componentes en encabezado");
@@ -98,12 +84,12 @@ public class sintactico {
 
     // Regresa el indice en la lista de tokens donde termina la declaracion de
     // variables, si es incorrecta la estrucutura o hay error regresa 0
-    public static int isDeclaracion(List<lexemaObj> listaTokens) {
+    public static int isDeclaracion(List<lexemaObj> listaTokens, int index) {
         try {
-            if (listaTokens.get(0).token == -15) {// var
-                int i = 1;
+            if (listaTokens.get(index).token == -15) {// var
+                int i = index+1;
     
-                for (i = 1; i < listaTokens.size(); i++) { // Se recorre la lista de tokens en busca de cada declaracion
+                for (i = index+1; i < listaTokens.size(); i++) { // Se recorre la lista de tokens en busca de cada declaracion
                     if (tokensPalabrasAsignacion.contains(listaTokens.get(i).token)) {// int, float, string, bool
                         if (listaTokens.get(i + 1).token == -77) { // :
                             i = getIndexVariablesDeclaradas(listaTokens, i + 2);// Regresa el indice donde termina la
@@ -124,7 +110,7 @@ public class sintactico {
                 }
                 return i;// la seccion puede solo contener la palabra var y no tener declaraciones i = 1
             }
-            mostrarErrorSintactico(listaTokens.get(0).numLinea, "Se esperaba palabra reservada var");
+            mostrarErrorSintactico(listaTokens.get(index).numLinea, "Se esperaba palabra reservada var");
             return 0;
         }catch(IndexOutOfBoundsException e){
             mostrarErrorSintactico("Faltan componentes en declaracion de variables");

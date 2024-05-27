@@ -2,6 +2,7 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +10,9 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 //AQUI SOLO DEBE HABER LAS FUNCIONES PARA IDENTIFICAR LEXEMAS, MAXIMO UNA FUNCION POR COMPONENTE LEXICO 
-public class expresiones {
+public class lexico {
+    public static List<compLexico> compLexicoList = getCompLexicosFromFile("numeros_token.txt");
+
     public static List<lineaObj> getLexico(File archivoEntrada){
         try {
             ArrayList<String> lErrores = new ArrayList<>();
@@ -26,14 +29,20 @@ public class expresiones {
             lector.close();
 
             //Agrega el resultado string a la lista de resultados temporal
-            for (lineaObj line : nuevoCodigo) {
-                List<lexemaObj> lexemas = line.lexemas;
-                for (lexemaObj lexema : lexemas) {
-                    if (lexema.token == 0) {
-                        lErrores.add(lexema.toString()+"\n");
+            if(nuevoCodigo.size() > 0){
+                for (lineaObj line : nuevoCodigo) {
+                    List<lexemaObj> lexemas = line.lexemas;
+                    for (lexemaObj lexema : lexemas) {
+                        if (lexema.token == 0) {
+                            lErrores.add(lexema.toString()+"\n");
+                        }
                     }
                 }
+            }else{
+                JOptionPane.showMessageDialog(null, "Archivo de entrada sin componentes lexicos");
+                return null;
             }
+            
 
             if(lErrores.size() > 0) {
                 opciones.mostrarResultados(lErrores, "Errores lexicos encontrados: ");
@@ -89,13 +98,13 @@ public class expresiones {
                 if (caracter == '"') {
                     String cadenaTemp = cadena.substring(indexCaracter+1, cadena.length()); 
                     String[] listaTempCadenas = Arrays.copyOfRange(listaCadenas, indexCadena+1, listaCadenas.length);
-                    strLexema = general.getString(cadenaTemp, listaTempCadenas);
+                    strLexema = getString(cadenaTemp, listaTempCadenas);
                     if (strLexema != null) {
                         nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
                         nuevaCadena = "";
                         contenido = strLexema.substring(1, strLexema.length() - 1).trim();
                         if (!contenido.isEmpty()) {
-                            nuevaLinea.add(new lexemaObj(strLexema, general.getCompLexicoValue("cCadena"), -1, lineNumber));
+                            nuevaLinea.add(new lexemaObj(strLexema, getCompLexicoValue("cCadena"), -1, lineNumber));
                             foundLexema = true;
                             break;
                         }
@@ -107,7 +116,7 @@ public class expresiones {
                 cadena.charAt(indexCaracter + 1) == '/'){
                     String cadenaTemp = cadena.substring(indexCaracter+2, cadena.length());
                     String[] listaTempCadenas = Arrays.copyOfRange(listaCadenas, indexCadena+1, listaCadenas.length);
-                    strLexema = general.getComment(cadenaTemp, listaTempCadenas);
+                    strLexema = getComment(cadenaTemp, listaTempCadenas);
                     if (strLexema != null) {
                         nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
                         nuevaCadena = "";
@@ -167,7 +176,7 @@ public class expresiones {
                     char caracter = cadena.charAt(indexCaracter);
                     if(caracter == '(' || caracter == ')' || caracter == ';' || caracter == ','){
                         String compLexico = Character.toString(caracter);
-                        int token = general.getCompLexicoValue(compLexico);//obtenemos el token correspondiente al caracter, desde el archivo txt
+                        int token = getCompLexicoValue(compLexico);//obtenemos el token correspondiente al caracter, desde el archivo txt
                         if(!nuevaCadena.isEmpty()){
                             nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));//los caracteres que no se identificaron se alamcenan como un nuevo lexema sin identificar
                         }
@@ -179,7 +188,7 @@ public class expresiones {
                             nuevaCadena += caracter;
                         }else{
                             String compLexico = Character.toString(caracter);
-                            int token = general.getCompLexicoValue(compLexico);
+                            int token = getCompLexicoValue(compLexico);
                             if(!nuevaCadena.isEmpty()){
                                 nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
                             }
@@ -225,15 +234,15 @@ public class expresiones {
                 
                 //se compara la cadena con las expresiones regulares para identificar la cadena
                 if (cadena.matches(expresion_cadena)) {
-                    token = general.getCompLexicoValue("iCadena");
+                    token = getCompLexicoValue("iCadena");
                 } else if (cadena.matches(expresion_entero)) {
-                    token = general.getCompLexicoValue("iEntero");
+                    token = getCompLexicoValue("iEntero");
                 } else if (cadena.matches(expresion_logico)) {
-                    token = general.getCompLexicoValue("iLogico");
+                    token = getCompLexicoValue("iLogico");
                 } else if (cadena.matches(expresion_programa)) {
-                    token = general.getCompLexicoValue("iGral");
+                    token = getCompLexicoValue("iGral");
                 } else if (cadena.matches(expresion_real)) {
-                    token = general.getCompLexicoValue("iReal");
+                    token = getCompLexicoValue("iReal");
                 } else{
                     //si no se identifica, se agrega a la lista como un lexema sin identificar
                     nuevaLinea.add(lexema);
@@ -266,7 +275,7 @@ public class expresiones {
                     char caracter = cadena.charAt(indexCaracter);
                     if(caracter == '+' || caracter == '*' || caracter == '/'){
                         String compLexico = Character.toString(caracter);
-                        int token = general.getCompLexicoValue(compLexico);
+                        int token = getCompLexicoValue(compLexico);
                         if(!nuevaCadena.isEmpty()){
                             nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
                         }
@@ -276,7 +285,7 @@ public class expresiones {
                         String cadenaTemp = cadena.substring(indexCaracter+1, cadena.length());
                         if(cadenaTemp.matches("\\d+")){
                             String compLexico = Character.toString(caracter);
-                            int token = general.getCompLexicoValue(compLexico);
+                            int token = getCompLexicoValue(compLexico);
                             if(!nuevaCadena.isEmpty()){
                                 nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
                             }
@@ -288,7 +297,7 @@ public class expresiones {
                         }else{
                             
                             String compLexico = Character.toString(caracter);
-                            int token = general.getCompLexicoValue(compLexico);
+                            int token = getCompLexicoValue(compLexico);
                             if(!nuevaCadena.isEmpty()){
                                 nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
                             }
@@ -299,7 +308,7 @@ public class expresiones {
                     }else if(caracter == ':'){
                         if(indexCaracter + 1 < cadena.length() && cadena.charAt(indexCaracter + 1) == '='){
                             String compLexico = ":=";
-                            int token = general.getCompLexicoValue(compLexico);
+                            int token = getCompLexicoValue(compLexico);
                             if(!nuevaCadena.isEmpty()){
                                 nuevaLinea.add(new lexemaObj(nuevaCadena, lineNumber));
                             }
@@ -344,12 +353,12 @@ public class expresiones {
                         nuevaCadena = "";
                         if(indexCaracter + 1 < cadena.length() && cadena.charAt(indexCaracter + 1) == '='){
                             String compLexico = Character.toString(caracter) + "=";
-                            int token = general.getCompLexicoValue(compLexico);
+                            int token = getCompLexicoValue(compLexico);
                             nuevaLinea.add(new lexemaObj(compLexico, token, -1, lineNumber));
                             indexCaracter++;
                         }else{
                             String compLexico = Character.toString(caracter);
-                            int token = general.getCompLexicoValue(compLexico);
+                            int token = getCompLexicoValue(compLexico);
                             nuevaLinea.add(new lexemaObj(compLexico, token, -1, lineNumber));
                         }
                     
@@ -359,7 +368,7 @@ public class expresiones {
                         }
                         nuevaCadena = "";
                         String compLexico = Character.toString(caracter)+"=";
-                        int token = general.getCompLexicoValue(compLexico);
+                        int token = getCompLexicoValue(compLexico);
                         nuevaLinea.add(new lexemaObj(compLexico, token, -1, lineNumber));
                         indexCaracter++;
                     }
@@ -404,7 +413,7 @@ public class expresiones {
                             }
                             nuevaCadena = "";
                             String compLexico = "&&";
-                            int token = general.getCompLexicoValue(compLexico);
+                            int token = getCompLexicoValue(compLexico);
                             nuevaLinea.add(new lexemaObj(compLexico, token, -1, lineNumber));
                             indexCaracter++;
                         }
@@ -415,7 +424,7 @@ public class expresiones {
                         }
                         nuevaCadena = "";
                         String compLexico = "||";
-                        int token = general.getCompLexicoValue(compLexico);
+                        int token = getCompLexicoValue(compLexico);
                         nuevaLinea.add(new lexemaObj(compLexico, token, -1, lineNumber));
                         indexCaracter++;
                         
@@ -428,7 +437,7 @@ public class expresiones {
                             }
                             nuevaCadena = "";
                             String compLexico = Character.toString(caracter);
-                            int token = general.getCompLexicoValue(compLexico);
+                            int token = getCompLexicoValue(compLexico);
                             nuevaLinea.add(new lexemaObj(compLexico, token, -1, lineNumber));
                         }
                     }
@@ -458,7 +467,7 @@ public class expresiones {
             if(lexema.token == 0){
                 String cadena = lexema.valorCadena;
                 if (cadena.matches("\\d+")) {
-                    int token = general.getCompLexicoValue("cEntero");
+                    int token = getCompLexicoValue("cEntero");
                     nuevaLinea.add(new lexemaObj(cadena, token, -1, lineNumber));
                 }else{
                     nuevaLinea.add(lexema);
@@ -481,7 +490,7 @@ public class expresiones {
             if(lexema.token == 0){
                 String cadena = lexema.valorCadena;
                 if (cadena.matches("-?\\d+\\.\\d+")) {
-                    int token = general.getCompLexicoValue("cReal");
+                    int token = getCompLexicoValue("cReal");
                     nuevaLinea.add(new lexemaObj(cadena, token, -1, lineNumber));
                 } else {
                     nuevaLinea.add(lexema);
@@ -504,10 +513,10 @@ public class expresiones {
             if(lexema.token == 0){
                 String cadena = lexema.valorCadena;
                 if (cadena.equals("true")) {
-                    int token = general.getCompLexicoValue("cTrue");
+                    int token = getCompLexicoValue("cTrue");
                     nuevaLinea.add(new lexemaObj(cadena, token, -1, lineNumber));
                 }else if(cadena.equals("false")){
-                    int token = general.getCompLexicoValue("cFalse");
+                    int token = getCompLexicoValue("cFalse");
                     nuevaLinea.add(new lexemaObj(cadena, token, -1, lineNumber));
                 } else {
                     nuevaLinea.add(lexema);
@@ -536,7 +545,7 @@ public class expresiones {
 
                 for (String palabra : palabrasReservadas) {
                     if (cadena.equals(palabra)) {
-                        token = general.getCompLexicoValue(palabra);
+                        token = getCompLexicoValue(palabra);
                         break;
                     }
                 }
@@ -591,4 +600,165 @@ public class expresiones {
             return null;
         }
     }
+
+    //Esta funcion lee el archivo de texto que contiene los tokens y sus componentes lexicos
+    //y los guarda en una lista de objetos compLexico
+    //cada linea del archivo esta separada por un guion bajo "_" para separar el token de su componente lexico
+    public static List<compLexico> getCompLexicosFromFile(String filePath) {
+        List<compLexico> resultList = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split("_");
+                String firstPart = parts[0].trim();
+                int secondPart = Integer.parseInt(parts[1].trim());
+                compLexico token = new compLexico(firstPart, secondPart); // Remove the reference to the outer class
+                resultList.add(token);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return resultList;
+    }   
+
+    //Toma como argumento un string y lo busca en la lista de componentes lexicos previamnete cargada
+    //si no enciuentra el componente lexico especificado regresa 0
+    public static int getCompLexicoValue(String compLexico) {
+        for (compLexico token : compLexicoList) {
+            if (token.getComponente().equals(compLexico)) {
+                return token.getValor();
+            }
+        }
+        return 0;
+    }
+
+    public static String getComment(String cadenaTemp, String[] listaTempCadenas) {
+        String lexema = findEndOfComment(cadenaTemp);
+        if (lexema.length()> 2 && lexema.charAt(lexema.length() - 1) == '/' && lexema.charAt(lexema.length() - 2) == '/') {
+            lexema = "//" + lexema;
+            return lexema;
+        }
+        for (String cadena : listaTempCadenas) {
+            lexema += (" " + findEndOfComment(cadena));
+            if (lexema.charAt(lexema.length() - 1) == '/' && lexema.charAt(lexema.length() - 2) == '/') {
+                lexema = "//" + lexema;
+                return lexema;
+            }
+        }
+        return null;
+    }
+
+    public static String findEndOfComment(String cadena) {
+        String lexema = "";
+        for (char caracter : cadena.toCharArray()) {
+            lexema += caracter;
+            if (caracter == '/' && cadena.indexOf(caracter) + 1 < cadena.length() && cadena.charAt(cadena.indexOf(caracter) + 1) == '/') {
+                return lexema + '/';
+            }
+        }
+        return lexema;
+    }
+
+    public static String getString(String cadenaTemp, String[] listaTempCadenas) {
+        String lexema = findEndOfString(cadenaTemp);
+        if (lexema.length() > 0 && lexema.charAt(lexema.length() - 1) == '"') {
+            lexema = '"' + lexema;
+            return lexema;
+        }
+        for (String cadena : listaTempCadenas) {
+            lexema += (" " + findEndOfString(cadena));
+            if (lexema.charAt(lexema.length() - 1) == '"') {
+                lexema = '"' + lexema;
+                return lexema;
+            }
+        }
+        return null;
+    }
+
+    public static String findEndOfString(String cadena) {
+        String lexema = "";
+        for (char caracter : cadena.toCharArray()) {
+            lexema += caracter;
+            if (caracter == '"') {
+                return lexema;
+            }
+        }
+        return lexema;
+    }
+}
+
+//calse lexema para instanciar objetos de tipo lexema
+class lexemaObj {
+    String valorCadena;//el lexema como tal
+    int token;//token respecto a tabla de tokens
+    int posicionTabla;//posicion tabla de simbolos, -2 para identificadores y -1 para cualquier otro
+    int numLinea; //la linea en la que se encuentra el lexema respecto a su archivo de texto
+
+    lexemaObj(String valorCadena, int numLinea) {
+        this.valorCadena = valorCadena;
+        this.numLinea = numLinea;
+    }
+
+    public lexemaObj(String valorCadena, int token, int posicionTabla, int numLinea) {
+        this.valorCadena = valorCadena;
+        this.token = token;
+        this.posicionTabla = posicionTabla;
+        this.numLinea = numLinea;
+    }
+
+    public void setLinea(int numLinea) {
+        this.numLinea = numLinea;
+    }
+    
+    @Override
+    public String toString() {
+        return (this.valorCadena+", "+this.token+", "+this.posicionTabla+", "+this.numLinea);
+    }
+}
+
+//clase lineaObj para instanciar objetos de tipo linea
+class lineaObj {
+    int posicion; //su posicion en el archivo de texto
+    List<lexemaObj> lexemas; //lexemas que contiene la linea
+
+    lineaObj(int posicion, List<lexemaObj> lexemas) {
+        this.posicion = posicion;
+        this.lexemas = lexemas;
+    }
+
+    public void setLexemas(List<lexemaObj> lexemas) {
+        this.lexemas = lexemas;
+    }
+
+    @Override
+    public String toString() {
+        String lexemaString = "";
+        for(lexemaObj lexema : this.lexemas){
+            lexemaString += lexema.toString() + "\n";
+        }
+        return lexemaString;
+    }
+}
+
+//se usa para almacenar la informacion de los tokens y sus componentes lexicos respecto al archivo de texto
+//donde se identifica el token de cada componente lexico respectivamente
+class compLexico {
+    private String componente;
+    private int valor;
+
+    public compLexico(String componente, int valor) {
+        this.componente = componente;
+        this.valor = valor;
+    }
+
+    public String getComponente() {
+        return componente;
+    }
+
+    public int getValor() {
+        return valor;
+    }
+    
 }

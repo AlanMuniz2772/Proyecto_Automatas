@@ -7,11 +7,11 @@ public class Main {
     // AQUI SOLO SE DEBE TENER LA ESTRUCTURA DEL MENU DE LA APLIACION
     public static void main(String[] args) {
         try{
-            String menu = "1. Ingresar cadena" + //
+            String menu = "1. Analizar lexico de cadena" + //
                     "\n2. Leer archivo de entrada" + // lee el archivo de entrada con las cadenas a procesar
-                    "\n3. Mostrar resultados en memoria" +
-                    "\n4. Limpiar resultados en memoria" +
-                    "\n5. Guardar resultados en archivo de salida" + // Unica manera de guardar resultados en archivo de salida
+                    "\n3. Mostrar tabla tokens" +
+                    "\n4. Limpiar tabla tokens" +
+                    "\n5. Guardar tabla de tokens en archivo de salida" + // Unica manera de guardar resultados en archivo de salida
                     "\n6. Definir direccion de archivo entrada" +
                     "\n7. Definir direccion de archivo salida";
 

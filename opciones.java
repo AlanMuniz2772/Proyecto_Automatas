@@ -47,7 +47,7 @@ public class opciones {
 			} else {
 				listaDeResultados.clear();
 			
-				lLineas = expresiones.getLexico(archivoEntrada);
+				lLineas = lexico.getLexico(archivoEntrada);
 				
 				if(lLineas != null){
 					List<lexemaObj> listaTokens = new ArrayList<>();
@@ -113,7 +113,7 @@ public class opciones {
 	//Define el archivo de texto que sera de lectura
     public static boolean setArchivoEntrada() {
     	try {
-    		String sPath = JOptionPane.showInputDialog("Ingrese direccion de archivo de entrada: ");
+    		String sPath = JOptionPane.showInputDialog("Ingrese direccion de archivo de entrada (Sin .txt): ");
     		
     		if(sPath != null && sPath.length()>0) {
     			// Crea un objeto File que representa el archivo en la dirección especificada
@@ -172,9 +172,8 @@ public class opciones {
 	public static void ingresoUnico () {
 		try {
 			String linea = JOptionPane.showInputDialog("Ingrese linea: ");
-			lineaObj line = expresiones.getLineaObj(linea, 1);
-			listaDeResultados.add(line.toString());
-			JOptionPane.showMessageDialog(null, line.toString());
+			lineaObj line = lexico.getLineaObj(linea, 1);
+			JOptionPane.showMessageDialog(null, line.toString(), "Analisis Lexico", JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Error en la función ingresoUnico: " + e.getMessage());
 		}
