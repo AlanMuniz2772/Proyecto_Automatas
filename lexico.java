@@ -2,7 +2,6 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +10,56 @@ import javax.swing.JOptionPane;
 
 //AQUI SOLO DEBE HABER LAS FUNCIONES PARA IDENTIFICAR LEXEMAS, MAXIMO UNA FUNCION POR COMPONENTE LEXICO 
 public class lexico {
-    public static List<compLexico> compLexicoList = getCompLexicosFromFile("numeros_token.txt");
+    public static List<compLexico> compLexicoList = new ArrayList<>(); //lista de componentes lexicos
+
+    static {
+        compLexicoList.add(new compLexico("program", -1));
+        compLexicoList.add(new compLexico("begin", -2));
+        compLexicoList.add(new compLexico("end", -3));
+        compLexicoList.add(new compLexico("read", -4));
+        compLexicoList.add(new compLexico("write", -5));
+        compLexicoList.add(new compLexico("if", -6));
+        compLexicoList.add(new compLexico("else", -7));
+        compLexicoList.add(new compLexico("while", -8));
+        compLexicoList.add(new compLexico("repeat", -9));
+        compLexicoList.add(new compLexico("until", -10));
+        compLexicoList.add(new compLexico("int", -11));
+        compLexicoList.add(new compLexico("real", -12));
+        compLexicoList.add(new compLexico("string", -13));
+        compLexicoList.add(new compLexico("bool", -14));
+        compLexicoList.add(new compLexico("var", -15));
+        compLexicoList.add(new compLexico("then", -16));
+        compLexicoList.add(new compLexico("do", -17));
+        compLexicoList.add(new compLexico("*", -21));
+        compLexicoList.add(new compLexico("/", -22));
+        compLexicoList.add(new compLexico("+", -24));
+        compLexicoList.add(new compLexico("-", -25));
+        compLexicoList.add(new compLexico(":=", -26));
+        compLexicoList.add(new compLexico("<", -31));
+        compLexicoList.add(new compLexico("<=", -32));
+        compLexicoList.add(new compLexico(">", -33));
+        compLexicoList.add(new compLexico(">=", -34));
+        compLexicoList.add(new compLexico("==", -35));
+        compLexicoList.add(new compLexico("!=", -36));
+        compLexicoList.add(new compLexico("&&", -41));
+        compLexicoList.add(new compLexico("||", -42));
+        compLexicoList.add(new compLexico("!", -43));
+        compLexicoList.add(new compLexico("iEntero", -51));
+        compLexicoList.add(new compLexico("iReal", -52));
+        compLexicoList.add(new compLexico("iCadena", -53));
+        compLexicoList.add(new compLexico("iLogico", -54));
+        compLexicoList.add(new compLexico("iGral", -55));
+        compLexicoList.add(new compLexico("cEntero", -61));
+        compLexicoList.add(new compLexico("cReal", -62));
+        compLexicoList.add(new compLexico("cCadena", -63));
+        compLexicoList.add(new compLexico("cTrue", -64));
+        compLexicoList.add(new compLexico("cFalse", -65));
+        compLexicoList.add(new compLexico("(", -73));
+        compLexicoList.add(new compLexico(")", -74));
+        compLexicoList.add(new compLexico(";", -75));
+        compLexicoList.add(new compLexico(",", -76));
+        compLexicoList.add(new compLexico(":", -77));
+    }
 
     public static List<lineaObj> getLexico(File archivoEntrada){
         try {
@@ -599,28 +647,6 @@ public class lexico {
             JOptionPane.showMessageDialog(null, "Error en la función lexica getPuntos(): " + e.getMessage());
             return null;
         }
-    }
-
-    //Esta funcion lee el archivo de texto que contiene los tokens y sus componentes lexicos
-    //y los guarda en una lista de objetos compLexico
-    //cada linea del archivo esta separada por un guion bajo "_" para separar el token de su componente lexico
-    public static List<compLexico> getCompLexicosFromFile(String filePath) {
-        List<compLexico> resultList = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split("_");
-                String firstPart = parts[0].trim();
-                int secondPart = Integer.parseInt(parts[1].trim());
-                compLexico token = new compLexico(firstPart, secondPart); // Remove the reference to the outer class
-                resultList.add(token);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return resultList;
     }   
 
     //Toma como argumento un string y lo busca en la lista de componentes lexicos previamnete cargada
